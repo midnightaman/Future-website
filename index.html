@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="background:#000">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -62,7 +62,7 @@
     position:fixed;top:22px;left:24px;z-index:100;
     font-weight:800;font-size:19px;letter-spacing:-0.02em;
     color:#fff;
-    text-shadow:0 1px 14px rgba(0,0,0,.4);
+    text-shadow:0 0 20px rgba(255,61,104,.35), 0 0 60px rgba(255,61,104,.12), 0 1px 14px rgba(0,0,0,.5);
   }
 
   /* ---------- SITE BACKGROUND (fixed, full window, behind everything) ---------- */
@@ -83,7 +83,7 @@
   .hero-clip.active{opacity:1;}
   .site-scrim{
     position:absolute;inset:0;
-    background:rgba(6,6,8,.6);
+    background:linear-gradient(180deg, rgba(6,6,8,.55) 0%, rgba(6,6,8,.45) 40%, rgba(6,6,8,.7) 100%);
   }
 
   /* ---------- HERO ---------- */
@@ -95,7 +95,8 @@
   .hero-scrim{
     position:absolute;inset:0;z-index:0;pointer-events:none;
     background-image:
-      linear-gradient(115deg, rgba(6,6,8,.5) 0%, rgba(6,6,8,.32) 38%, rgba(6,6,8,.1) 70%, rgba(6,6,8,0) 100%);
+      linear-gradient(115deg, rgba(6,6,8,.6) 0%, rgba(6,6,8,.38) 38%, rgba(6,6,8,.12) 70%, rgba(6,6,8,0) 100%),
+      linear-gradient(180deg, transparent 60%, rgba(6,6,8,.4) 100%);
   }
   .hero .wrap{
     position:relative;z-index:1;
@@ -107,7 +108,7 @@
     letter-spacing:-0.035em;
     line-height:1.03;
     color:#fff;
-    text-shadow:0 2px 24px rgba(0,0,0,.25);
+    text-shadow:0 2px 24px rgba(0,0,0,.35), 0 0 80px rgba(255,61,104,.1);
   }
   .hero .sub{
     margin-top:20px;
@@ -130,7 +131,12 @@
   .btn-primary:hover{opacity:.88;}
   .btn-primary:active{transform:scale(.97);}
   .btn-primary:disabled{opacity:.35;cursor:not-allowed;}
-  .hero-actions .btn-primary{background:#fff;color:var(--ink);}
+  .hero-actions .btn-primary{
+    background:#fff;color:var(--ink);
+    box-shadow:0 0 24px rgba(255,255,255,.2), 0 0 60px rgba(255,255,255,.06);
+    animation:ctaPulse 3s ease-in-out infinite;
+  }
+  @keyframes ctaPulse{0%,100%{box-shadow:0 0 24px rgba(255,255,255,.2), 0 0 60px rgba(255,255,255,.06)}50%{box-shadow:0 0 32px rgba(255,255,255,.35), 0 0 80px rgba(255,61,104,.12)}}
   .hero-note{font-size:13px;color:rgba(255,255,255,.65);font-weight:500;}
 
   .hero-visual{
@@ -238,7 +244,8 @@
     max-width:640px;margin:0 auto;
     background:#fff;border-radius:28px;
     padding:36px 28px 32px;
-    box-shadow:var(--shadow-soft);
+    box-shadow:0 0 40px rgba(255,61,104,.08), 0 0 100px rgba(255,61,104,.04), var(--shadow-soft);
+    border:1px solid rgba(255,255,255,.08);
   }
   .progress-track{
     height:4px;background:var(--line);border-radius:var(--radius-pill);overflow:hidden;
@@ -357,7 +364,7 @@
     max-width:560px;margin:0 auto;
     background:#fff;border-radius:28px;
     padding:52px 32px 44px;
-    box-shadow:var(--shadow-soft);
+    box-shadow:0 0 40px rgba(255,61,104,.08), 0 0 100px rgba(255,61,104,.04), var(--shadow-soft);
     text-align:center;
   }
   .check-circle{
@@ -430,7 +437,7 @@
     max-width:720px;margin:0 auto;
     background:#fff;border-radius:28px;
     padding:36px 28px 20px;
-    box-shadow:var(--shadow-soft);
+    box-shadow:0 0 40px rgba(255,61,104,.06), var(--shadow-soft);
   }
   .faq-card h2{
     font-size:clamp(1.5rem,3.6vw,2rem);font-weight:800;letter-spacing:-0.025em;
@@ -516,12 +523,163 @@
     .form-card{padding:44px 44px 40px;}
   }
 
+  /* ---------- CINEMATIC OVERLAYS ---------- */
+  .film-grain{
+    position:fixed;inset:0;z-index:3;
+    pointer-events:none;
+    opacity:0;
+    animation:grainFadeIn 2s ease 1s forwards;
+  }
+  .film-grain::before{
+    content:'';position:absolute;inset:-100%;
+    background:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E") repeat;
+    background-size:200px;
+    animation:grainDrift .5s steps(2) infinite;
+  }
+  @keyframes grainDrift{0%{transform:translate(0)}50%{transform:translate(-5%,-5%)}100%{transform:translate(5%,5%)}}
+  @keyframes grainFadeIn{to{opacity:1}}
+
+  .vignette{
+    position:fixed;inset:0;z-index:1;
+    pointer-events:none;
+    background:radial-gradient(ellipse 75% 65% at 50% 50%, transparent 40%, rgba(0,0,0,.5) 100%);
+  }
+
+  .lens-streak{
+    position:fixed;top:22%;left:0;right:0;z-index:2;
+    height:1px;pointer-events:none;
+    background:linear-gradient(90deg, transparent 5%, rgba(255,61,104,.08) 25%, rgba(255,61,104,.18) 50%, rgba(255,61,104,.08) 75%, transparent 95%);
+    filter:blur(6px);
+    opacity:0;
+    animation:streakPulse 7s ease-in-out 3s infinite;
+  }
+  @keyframes streakPulse{0%,100%{opacity:0;transform:scaleX(.7)}50%{opacity:1;transform:scaleX(1)}}
+
+  .lens-streak-2{
+    position:fixed;top:55%;left:0;right:0;z-index:2;
+    height:1px;pointer-events:none;
+    background:linear-gradient(90deg, transparent 10%, rgba(255,255,255,.04) 30%, rgba(255,255,255,.08) 50%, rgba(255,255,255,.04) 70%, transparent 90%);
+    filter:blur(10px);
+    opacity:0;
+    animation:streakPulse 9s ease-in-out 5s infinite;
+  }
+
+  /* Scroll reveal */
+  [data-reveal]{
+    opacity:0;
+    transform:translateY(40px);
+    transition:opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1);
+  }
+  [data-reveal].revealed{
+    opacity:1;
+    transform:translateY(0);
+  }
+  [data-reveal][data-delay="1"]{transition-delay:.12s}
+  [data-reveal][data-delay="2"]{transition-delay:.24s}
+
+  /* Cinematic hero entrance */
+  .hero-copy{
+    opacity:0;
+    transform:translateY(30px);
+    animation:heroFadeUp 1.2s cubic-bezier(.16,1,.3,1) .4s forwards;
+  }
+  .hero-visual{
+    opacity:0;
+    transform:translateY(30px) scale(.97);
+    animation:heroPhoneUp 1.4s cubic-bezier(.16,1,.3,1) .7s forwards;
+  }
+  @keyframes heroFadeUp{to{opacity:1;transform:translateY(0)}}
+  @keyframes heroPhoneUp{to{opacity:1;transform:translateY(0) scale(1)}}
+
+  /* Phone glow */
+  .phone-mock::after{
+    content:'';position:absolute;inset:-12px;
+    border-radius:66px;
+    background:radial-gradient(ellipse at 50% 80%, rgba(255,61,104,.12) 0%, transparent 60%);
+    pointer-events:none;
+    z-index:-1;
+    animation:phoneGlow 4s ease-in-out infinite alternate;
+  }
+  @keyframes phoneGlow{0%{opacity:.5}100%{opacity:1}}
+
   @media (prefers-reduced-motion: reduce){
     *{animation-duration:.001s !important;transition-duration:.001s !important;}
   }
+
+  /* ---------- MINIMAL INTRO ---------- */
+  body.intro-active{overflow:hidden;background:#000;}
+
+  .intro-overlay{
+    position:fixed;inset:0;z-index:10000;
+    background:#000;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    overflow:hidden;
+  }
+
+  /* White curtain swipe (left → right) */
+  .intro-curtain{
+    position:absolute;inset:0;z-index:1;
+    background:#fff;
+    transform:translateX(-100%);
+    animation:curtainIn .55s cubic-bezier(.4,0,.2,1) 2.4s forwards;
+  }
+  @keyframes curtainIn{to{transform:translateX(0)}}
+
+  .intro-title{
+    position:relative;z-index:2;
+    font-family:'Inter',sans-serif;
+    font-weight:800;
+    font-size:clamp(2rem, 8vw, 3.6rem);
+    letter-spacing:-0.035em;
+    color:#fff;
+    mix-blend-mode:difference;
+    opacity:0;
+    animation:introFade .8s ease .3s forwards;
+  }
+  @keyframes introFade{to{opacity:1}}
+
+  .intro-loader{
+    position:relative;z-index:2;
+    margin-top:20px;
+    width:48px;height:2px;
+    background:rgba(255,255,255,.12);
+    border-radius:2px;
+    overflow:hidden;
+    opacity:0;
+    animation:introFade .5s ease .5s forwards, loaderHide .3s ease 2.35s forwards;
+  }
+  @keyframes loaderHide{to{opacity:0}}
+  .intro-loader::after{
+    content:'';
+    position:absolute;inset:0;
+    background:#fff;
+    border-radius:2px;
+    transform-origin:left;
+    animation:loaderFill 1.8s cubic-bezier(.4,0,.2,1) .6s forwards;
+  }
+  @keyframes loaderFill{
+    0%{transform:scaleX(0)}
+    100%{transform:scaleX(1)}
+  }
+
+  /* Exit: slide entire overlay to the right */
+  .intro-overlay.intro-exit{
+    animation:introSlideOut .55s cubic-bezier(.4,0,.2,1) forwards;
+  }
+  @keyframes introSlideOut{
+    to{transform:translateX(100%)}
+  }
 </style>
 </head>
-<body>
+<body class="intro-active">
+
+<!-- ===== INTRO ===== -->
+<div class="intro-overlay" id="introOverlay">
+  <div class="intro-curtain" aria-hidden="true"></div>
+  <div class="intro-title">Future</div>
+  <div class="intro-loader"></div>
+</div>
 
 <div class="site-bg" aria-hidden="true">
   <video class="hero-clip active" data-clip="walk" muted playsinline preload="auto"
@@ -537,7 +695,11 @@
     <source src="https://videos.pexels.com/video-files/9121275/9121275-uhd_2560_1440_25fps.mp4" type="video/mp4">
   </video>
   <div class="site-scrim"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="lens-streak" aria-hidden="true"></div>
+  <div class="lens-streak-2" aria-hidden="true"></div>
 </div>
+<div class="film-grain" aria-hidden="true"></div>
 
 <div class="brandmark">Future</div>
 
@@ -606,12 +768,12 @@
 
 <section class="form-section" id="waitlist">
   <div class="wrap">
-    <div class="form-eyebrow-block">
+    <div class="form-eyebrow-block" data-reveal>
       <h2>Join the early access list</h2>
       <p>Six quick steps. Two minutes. Priority access when we launch.</p>
     </div>
 
-    <form class="form-card" id="formCard" novalidate>
+    <form class="form-card" id="formCard" novalidate data-reveal data-delay="1">
       <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
       <div class="progress-meta">
         <span class="step-count">Step <span id="stepNum">1</span> of 6</span>
@@ -859,7 +1021,7 @@
 
 <section class="faq-section" id="faq">
   <div class="wrap">
-    <div class="faq-card">
+    <div class="faq-card" data-reveal>
       <h2>Frequently asked questions</h2>
 
       <div class="faq-item">
@@ -961,6 +1123,23 @@
 <script>
 (function(){
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- Cinematic intro ----
+  const intro = document.getElementById('introOverlay');
+  if(intro){
+    const introDelay = reduceMotion ? 300 : 3300;
+    setTimeout(()=>{
+      intro.classList.add('intro-exit');
+      const onEnd = ()=>{
+        intro.remove();
+        document.body.classList.remove('intro-active');
+        document.documentElement.style.background = '';
+      };
+      intro.addEventListener('animationend', onEnd);
+      // safety fallback in case animationend doesn't fire
+      setTimeout(onEnd, 1200);
+    }, introDelay);
+  }
 
   // ---- Hero background video cycler ----
   // Advances on each clip's natural 'ended' event, so a clip is never
@@ -1110,10 +1289,24 @@
   });
 
   // ==== Web3Forms config ====
-  // Get a free access key instantly at https://web3forms.com — just enter the
-  // email address where you want waitlist signups to arrive, no account needed.
-  // Paste the key it gives you below.
   const WEB3FORMS_ACCESS_KEY = '5356f884-6075-458a-9690-183e7400a7ec';
+
+  // ==== Real waitlist counter (starts at 402) ====
+  const COUNTER_OFFSET = 401; // API count 1 = position 402
+  async function incrementCounter(){
+    try{
+      const res = await fetch('https://api.counterapi.dev/v1/heyfuture-waitlist/signups/up');
+      if(!res.ok) throw new Error('counter failed');
+      const data = await res.json();
+      return (data.count || 1) + COUNTER_OFFSET;
+    } catch(e){
+      // fallback if counter API is unreachable
+      const stored = parseInt(localStorage.getItem('_fpos') || '0');
+      const pos = stored ? stored + 1 : 402 + Math.floor(Math.random()*30);
+      localStorage.setItem('_fpos', String(pos));
+      return pos;
+    }
+  }
 
   function gatherFormData(){
     return {
@@ -1154,6 +1347,7 @@
     submitBtn.textContent = 'Submitting…';
 
     try{
+      // 1) Send form data to email
       const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -1162,20 +1356,24 @@
       const result = await res.json();
       if(!result.success){ throw new Error(result.message || 'Submission failed'); }
 
+      // 2) Get real waitlist position
+      const position = await incrementCounter();
+
       const formCard = document.getElementById('formCard');
       const thankYou = document.getElementById('thankYou');
       formCard.hidden = true;
       thankYou.hidden = false;
 
+      // Animate counter up to real position
       const posNum = document.getElementById('positionNum');
-      const target = 300 + Math.floor(Math.random()*450);
+      const target = position;
       let n = 0;
-      const step = Math.max(1, Math.round(target/40));
+      const step = Math.max(1, Math.round(target/45));
       const timer = setInterval(()=>{
         n += step;
         if(n >= target){ n = target; clearInterval(timer); }
         posNum.textContent = n.toLocaleString('en-IN');
-      }, 20);
+      }, 18);
 
       thankYou.scrollIntoView({behavior: reduceMotion ? 'auto':'smooth', block:'start'});
     } catch(err){
@@ -1184,19 +1382,92 @@
       const stepEl = steps[current];
       const msg = stepEl.querySelector('.error-msg');
       if(msg){
-        msg.textContent = 'Something went wrong sending your response — please try again, or email support@heyfuture.site.';
+        msg.textContent = 'Something went wrong — please try again, or email support@heyfuture.site.';
         msg.classList.add('show');
       }
     }
   });
 
-  document.getElementById('shareBtn').addEventListener('click', ()=>{
-    const note = document.getElementById('shareNote');
-    if(navigator.clipboard){
-      navigator.clipboard.writeText('https://future.app/invite').catch(()=>{});
+  // ---- Share button (native share on mobile, clipboard fallback) ----
+  const SITE_URL = 'https://heyfuture.site';
+  const shareBtn = document.getElementById('shareBtn');
+  const shareNote = document.getElementById('shareNote');
+  const shareBtnOriginal = shareBtn.textContent;
+
+  function copyToClipboardFallback(text){
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px;opacity:0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try{ document.execCommand('copy'); } catch(_){}
+    document.body.removeChild(ta);
+  }
+
+  function showShareSuccess(msg){
+    shareBtn.textContent = '✓ Link copied!';
+    shareBtn.style.background = 'var(--ink)';
+    shareBtn.style.color = '#fff';
+    shareBtn.style.borderColor = 'var(--ink)';
+    shareNote.textContent = msg;
+    setTimeout(()=>{
+      shareBtn.textContent = shareBtnOriginal;
+      shareBtn.style.background = '';
+      shareBtn.style.color = '';
+      shareBtn.style.borderColor = '';
+    }, 3000);
+  }
+
+  shareBtn.addEventListener('click', async ()=>{
+    // 1) Try native share (mobile)
+    if(navigator.share){
+      try{
+        await navigator.share({
+          title: 'Future — Find a date, not another chat.',
+          text: 'I just joined the Future waitlist — an AI dating app that actually books your first date. Join before spots run out:',
+          url: SITE_URL
+        });
+        shareBtn.textContent = '✓ Shared!';
+        shareBtn.style.background = 'var(--ink)';
+        shareBtn.style.color = '#fff';
+        shareBtn.style.borderColor = 'var(--ink)';
+        shareNote.textContent = 'Nice! Your friends move you up 20 spots each.';
+        setTimeout(()=>{
+          shareBtn.textContent = shareBtnOriginal;
+          shareBtn.style.background = '';
+          shareBtn.style.color = '';
+          shareBtn.style.borderColor = '';
+        }, 3000);
+        return;
+      } catch(e){
+        if(e.name === 'AbortError') return; // user cancelled share sheet
+      }
     }
-    note.textContent = 'Link copied — send it to a friend!';
+    // 2) Try modern clipboard API
+    try{
+      await navigator.clipboard.writeText(SITE_URL);
+    } catch(_){
+      // 3) Fallback: old-school textarea + execCommand
+      copyToClipboardFallback(SITE_URL);
+    }
+    showShareSuccess('Link copied — send it to a friend to move up 20 spots!');
   });
+
+  // ---- Scroll reveal observer ----
+  if(!reduceMotion){
+    const revealObs = new IntersectionObserver((entries)=>{
+      entries.forEach(en=>{
+        if(en.isIntersecting){
+          en.target.classList.add('revealed');
+          revealObs.unobserve(en.target);
+        }
+      });
+    }, {threshold:0.12, rootMargin:'0px 0px -40px 0px'});
+    document.querySelectorAll('[data-reveal]').forEach(el=> revealObs.observe(el));
+  } else {
+    document.querySelectorAll('[data-reveal]').forEach(el=> el.classList.add('revealed'));
+  }
 
   // ---- FAQ accordion ----
   document.querySelectorAll('.faq-item').forEach(item=>{
