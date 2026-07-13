@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Future — Find a date, not another chat.</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="/icons/favicon-48x48.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/icons/apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-touch-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="167x167" href="/icons/apple-touch-icon-167x167.png">
+<link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#0B0B0C">
+<link rel="manifest" href="/icons/site.webmanifest">
+<meta name="msapplication-config" content="/icons/browserconfig.xml">
+<meta name="msapplication-TileColor" content="#0B0B0C">
+<meta name="theme-color" content="#0B0B0C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FFFFFF;
+    --ink:#0B0B0C;
+    --ink-70:rgba(11,11,12,.66);
+    --ink-45:rgba(11,11,12,.42);
+    --ink-25:rgba(11,11,12,.16);
+    --mist:#F6F6F7;
+    --mist-2:#F0F0F2;
+    --line:#E6E6E9;
+    --signal:#FF3D68;
+    --signal-dim:#E23459;
+    --signal-soft:#FFEBF0;
+    --radius:20px;
+    --radius-sm:13px;
+    --radius-pill:999px;
+    --maxw:1160px;
+    --shadow-soft: 0 1px 2px rgba(11,11,12,.04), 0 12px 32px -16px rgba(11,11,12,.12);
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.45;
+  }
+  img,svg{display:block;max-width:100%;}
+  button{font-family:inherit;}
+  h1,h2,h3,p{margin:0;}
+  a{color:inherit;}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px;}
+
+  /* ---------- BRANDMARK ---------- */
+  .brandmark{
+    position:fixed;top:22px;left:24px;z-index:100;
+    font-weight:800;font-size:19px;letter-spacing:-0.02em;
+    color:#fff;
+    text-shadow:0 1px 14px rgba(0,0,0,.4);
+  }
+
+  /* ---------- SITE BACKGROUND (fixed, full window, behind everything) ---------- */
+  .site-bg{
+    position:fixed;inset:0;z-index:0;
+    overflow:hidden;pointer-events:none;
+    background:#0B0B0C;
+  }
+  .hero-clip{
+    position:absolute;inset:0;
+    width:100%;height:100%;
+    object-fit:cover;object-position:center 35%;
+    filter:blur(3px) saturate(1.05) brightness(.88);
+    transform:scale(1.08);
+    opacity:0;
+    transition:opacity 1.6s ease;
+  }
+  .hero-clip.active{opacity:1;}
+  .site-scrim{
+    position:absolute;inset:0;
+    background:rgba(6,6,8,.6);
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    padding:132px 0 64px;
+    background:transparent;
+  }
+  .hero-scrim{
+    position:absolute;inset:0;z-index:0;pointer-events:none;
+    background-image:
+      linear-gradient(115deg, rgba(6,6,8,.5) 0%, rgba(6,6,8,.32) 38%, rgba(6,6,8,.1) 70%, rgba(6,6,8,0) 100%);
+  }
+  .hero .wrap{
+    position:relative;z-index:1;
+    display:flex;flex-direction:column;gap:44px;
+  }
+  .hero h1{
+    font-size:clamp(2.4rem, 7.2vw, 4.6rem);
+    font-weight:800;
+    letter-spacing:-0.035em;
+    line-height:1.03;
+    color:#fff;
+    text-shadow:0 2px 24px rgba(0,0,0,.25);
+  }
+  .hero .sub{
+    margin-top:20px;
+    font-size:clamp(1.05rem, 2.6vw, 1.3rem);
+    color:rgba(255,255,255,.86);
+    max-width:480px;
+    font-weight:400;
+  }
+  .hero-actions{
+    margin-top:32px;
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  }
+  .btn-primary{
+    background:var(--ink);color:#fff;border:none;
+    padding:16px 30px;border-radius:var(--radius-pill);
+    font-weight:700;font-size:16px;cursor:pointer;
+    transition:transform .15s ease, opacity .15s ease;
+    white-space:nowrap;
+  }
+  .btn-primary:hover{opacity:.88;}
+  .btn-primary:active{transform:scale(.97);}
+  .btn-primary:disabled{opacity:.35;cursor:not-allowed;}
+  .hero-actions .btn-primary{background:#fff;color:var(--ink);}
+  .hero-note{font-size:13px;color:rgba(255,255,255,.65);font-weight:500;}
+
+  .hero-visual{
+    display:flex;justify-content:center;
+  }
+
+  /* Realistic iPhone frame */
+  .phone-mock{
+    position:relative;
+    width:min(300px, 78vw);
+    aspect-ratio:9/19.5;
+    background:linear-gradient(160deg,#1c1c1e,#0b0b0c);
+    border-radius:54px;
+    padding:5px;
+    box-shadow:var(--shadow-soft), inset 0 0 0 2px rgba(255,255,255,.06);
+  }
+  .side-btn{position:absolute;background:#141416;border-radius:3px;}
+  .btn-mute{left:-3px;top:16%;width:3px;height:22px;}
+  .btn-vol-up{left:-3px;top:23%;width:3px;height:38px;}
+  .btn-vol-down{left:-3px;top:32%;width:3px;height:38px;}
+  .btn-power{right:-3px;top:24%;width:3px;height:56px;}
+
+  .phone-screen{
+    position:relative;
+    width:100%;height:100%;
+    background:#000;
+    border-radius:48px;
+    overflow:hidden;
+  }
+  .dynamic-island{
+    position:absolute;top:10px;left:50%;transform:translateX(-50%);
+    width:84px;height:24px;background:#000;border-radius:20px;
+    z-index:6;
+  }
+  .scene{
+    position:absolute;inset:0;
+    background-size:cover;background-position:center;
+    opacity:0;transform:scale(1.02);
+    transition:opacity .6s ease, transform .6s ease;
+    pointer-events:none;
+  }
+  .scene.active{opacity:1;transform:scale(1);pointer-events:auto;}
+  .scene-scrim{
+    position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(0,0,0,.08) 0%, rgba(0,0,0,.05) 40%, rgba(0,0,0,.72) 100%);
+  }
+  .scene-content{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;justify-content:flex-end;
+    padding:20px 14px;
+  }
+  .scene-tag{
+    font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    color:#fff;opacity:.9;margin-bottom:10px;
+  }
+  .glass-card{
+    background:rgba(255,255,255,.88);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-radius:18px;padding:14px 15px;
+    box-shadow:0 8px 24px rgba(0,0,0,.18);
+  }
+  .bubble{
+    max-width:88%;padding:10px 13px;border-radius:15px;
+    font-size:12.5px;font-weight:500;line-height:1.35;
+    margin-bottom:8px;
+  }
+  .bubble.ai{background:#fff;color:var(--ink);border-bottom-left-radius:4px;align-self:flex-start;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+  .bubble.me{background:var(--ink);color:#fff;border-bottom-right-radius:4px;align-self:flex-end;margin-left:auto;margin-bottom:0;}
+  .bubble-row{display:flex;flex-direction:column;}
+  .match-name{font-weight:700;font-size:15px;color:var(--ink);}
+  .match-sub{font-size:12px;color:var(--ink-45);margin-top:2px;}
+  .match-pct{
+    display:inline-block;margin-top:10px;
+    background:var(--signal-soft);color:var(--signal-dim);
+    font-weight:700;font-size:11.5px;padding:5px 11px;border-radius:var(--radius-pill);
+  }
+  .booked-tag{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+    color:#1E9E5A;margin-bottom:8px;
+  }
+  .booked-tag::before{content:"";width:6px;height:6px;border-radius:50%;background:#1E9E5A;}
+  .booked-title{font-weight:700;font-size:15px;color:var(--ink);}
+  .booked-sub{font-size:12px;color:var(--ink-45);margin-top:4px;line-height:1.5;}
+
+  /* ---------- FORM SECTION ---------- */
+  .form-section{
+    position:relative;
+    background:transparent;
+    padding:72px 0 96px;
+  }
+  .form-eyebrow-block{
+    text-align:center;margin-bottom:36px;
+  }
+  .form-eyebrow-block h2{
+    font-size:clamp(1.7rem,4vw,2.4rem);font-weight:800;letter-spacing:-0.025em;
+    color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.3);
+  }
+  .form-eyebrow-block p{
+    margin-top:10px;color:rgba(255,255,255,.78);font-size:16px;
+  }
+
+  .form-card{
+    max-width:640px;margin:0 auto;
+    background:#fff;border-radius:28px;
+    padding:36px 28px 32px;
+    box-shadow:var(--shadow-soft);
+  }
+  .progress-track{
+    height:4px;background:var(--line);border-radius:var(--radius-pill);overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;background:var(--ink);width:16.66%;
+    transition:width .35s ease;
+  }
+  .progress-meta{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-top:14px;
+  }
+  .progress-meta .step-count{font-size:12.5px;color:var(--ink-45);font-weight:600;}
+  .progress-meta .step-title{font-size:12.5px;color:var(--signal-dim);font-weight:700;letter-spacing:.02em;text-transform:uppercase;}
+
+  .step{margin-top:28px;}
+  .step h3{
+    font-size:22px;font-weight:800;letter-spacing:-0.02em;margin-bottom:6px;
+  }
+  .step .step-sub{color:var(--ink-45);font-size:14px;margin-bottom:22px;}
+
+  .field{margin-bottom:20px;}
+  .field label{
+    display:block;font-size:13.5px;font-weight:700;margin-bottom:8px;
+  }
+  .field .optional{color:var(--ink-45);font-weight:500;}
+  .field input[type="text"],
+  .field input[type="number"],
+  .field input[type="tel"],
+  .field input[type="email"],
+  .field textarea{
+    width:100%;border:1.5px solid var(--line);background:var(--mist);
+    border-radius:var(--radius);
+    padding:14px 16px;font-size:15px;font-family:inherit;color:var(--ink);
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .field input:focus,.field textarea:focus{
+    outline:none;border-color:var(--ink);background:#fff;
+  }
+  .field textarea{resize:vertical;min-height:90px;}
+  .field textarea.large{min-height:130px;}
+
+  .pill-group{display:flex;flex-wrap:wrap;gap:9px;}
+  .pill{
+    border:1.5px solid var(--line);background:#fff;
+    padding:10px 18px;border-radius:var(--radius-pill);
+    font-size:14px;font-weight:600;color:var(--ink-70);
+    cursor:pointer;transition:all .15s ease;
+  }
+  .pill:hover{border-color:var(--ink-25);}
+  .pill.selected{
+    background:var(--ink);border-color:var(--ink);color:#fff;
+  }
+  .pill.other-pill.selected{background:var(--signal);border-color:var(--signal);}
+  .other-input{
+    margin-top:10px;display:none;
+  }
+  .other-input.show{display:block;}
+
+  .slider-block{
+    background:var(--mist);border-radius:var(--radius);padding:20px 18px 16px;
+  }
+  .slider-value{
+    font-size:26px;font-weight:800;letter-spacing:-0.02em;margin-bottom:10px;
+  }
+  .slider-value span{color:var(--signal-dim);}
+  input[type="range"]{
+    -webkit-appearance:none;appearance:none;width:100%;height:4px;
+    background:var(--line);border-radius:var(--radius-pill);outline:none;
+  }
+  input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;
+    width:22px;height:22px;border-radius:50%;background:var(--ink);
+    border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:pointer;
+  }
+  input[type="range"]::-moz-range-thumb{
+    width:22px;height:22px;border-radius:50%;background:var(--ink);
+    border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:pointer;border:none;
+  }
+  .slider-labels{
+    display:flex;justify-content:space-between;margin-top:8px;
+    font-size:12px;color:var(--ink-45);font-weight:600;
+  }
+
+  .bundle-card{
+    background:var(--mist);border-radius:var(--radius);padding:16px 18px;margin-bottom:16px;
+  }
+  .bundle-card ul{margin:8px 0 0;padding:0;list-style:none;}
+  .bundle-card li{
+    font-size:13.5px;color:var(--ink-70);padding:3px 0;
+  }
+  .bundle-price{font-weight:800;color:var(--ink);}
+
+  .step-actions{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-top:32px;gap:12px;
+  }
+  .btn-ghost{
+    background:none;border:none;color:var(--ink-70);font-weight:600;
+    font-size:14.5px;cursor:pointer;padding:12px 6px;
+  }
+  .btn-ghost:hover{color:var(--ink);}
+  .step-actions .btn-primary{width:100%;}
+  .step-actions.has-back .btn-primary{width:auto;flex:1;}
+
+  .error-msg{
+    color:var(--signal-dim);font-size:12.5px;font-weight:600;
+    margin-top:-10px;margin-bottom:16px;display:none;
+  }
+  .error-msg.show{display:block;}
+  .field.field-error input,
+  .field.field-error textarea{border-color:var(--signal);}
+
+  /* ---------- THANK YOU ---------- */
+  .thank-you{
+    max-width:560px;margin:0 auto;
+    background:#fff;border-radius:28px;
+    padding:52px 32px 44px;
+    box-shadow:var(--shadow-soft);
+    text-align:center;
+  }
+  .check-circle{
+    width:72px;height:72px;border-radius:50%;
+    background:var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto 24px;
+    animation:pop .5s cubic-bezier(.2,1.4,.4,1);
+  }
+  @keyframes pop{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+  .thank-you h2{
+    font-size:clamp(1.8rem,4.5vw,2.5rem);font-weight:800;letter-spacing:-0.03em;
+  }
+  .thank-you .ty-copy{
+    margin-top:16px;color:var(--ink-70);font-size:15.5px;line-height:1.6;
+  }
+  .perks{
+    margin:26px 0;padding:20px;background:var(--mist);border-radius:var(--radius);
+    text-align:left;
+  }
+  .perks li{
+    list-style:none;font-size:14.5px;font-weight:600;padding:8px 0;
+    display:flex;align-items:center;gap:10px;
+  }
+  .perks li::before{content:"✓";color:var(--signal-dim);font-weight:800;}
+  .position-block{margin:28px 0;}
+  .position-label{font-size:12.5px;color:var(--ink-45);font-weight:700;letter-spacing:.05em;text-transform:uppercase;}
+  .position-number{
+    font-size:52px;font-weight:900;letter-spacing:-0.03em;margin-top:6px;
+  }
+  .position-number span{color:var(--ink-45);font-size:28px;font-weight:700;}
+  .share-btn{
+    background:var(--mist);border:1.5px solid var(--line);
+    padding:14px 26px;border-radius:var(--radius-pill);
+    font-weight:700;font-size:14.5px;cursor:pointer;color:var(--ink);
+    transition:background .15s ease;
+  }
+  .share-btn:hover{background:var(--mist-2);}
+  .share-note{font-size:12.5px;color:var(--ink-45);margin-top:10px;}
+
+  /* ---------- FOOTER ---------- */
+  .footer{
+    position:relative;
+    background:transparent;
+    padding:22px 0;
+  }
+  .footer-inner{
+    max-width:var(--maxw);margin:0 auto;padding:0 24px;
+    display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+    gap:14px 28px;
+  }
+  .footer-links{
+    display:flex;flex-wrap:wrap;align-items:center;
+    gap:22px;margin:0;padding:0;list-style:none;
+  }
+  .footer-links li{font-size:12.5px;}
+  .footer-links a{
+    color:rgba(255,255,255,.62);text-decoration:none;font-weight:500;
+    transition:color .15s ease;
+  }
+  .footer-links a:hover{color:#fff;}
+  .footer-copy{color:rgba(255,255,255,.4);font-weight:500;}
+
+  /* ---------- FAQ ---------- */
+  .faq-section{
+    position:relative;
+    padding:24px 0 88px;
+  }
+  .faq-card{
+    max-width:720px;margin:0 auto;
+    background:#fff;border-radius:28px;
+    padding:36px 28px 20px;
+    box-shadow:var(--shadow-soft);
+  }
+  .faq-card h2{
+    font-size:clamp(1.5rem,3.6vw,2rem);font-weight:800;letter-spacing:-0.025em;
+    margin-bottom:24px;
+  }
+  .faq-item{
+    border-top:1px solid var(--line);
+  }
+  .faq-item:last-child{border-bottom:1px solid var(--line);}
+  .faq-q{
+    width:100%;text-align:left;background:none;border:none;cursor:pointer;
+    padding:18px 4px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+    font-size:15.5px;font-weight:700;color:var(--ink);
+  }
+  .faq-q .faq-icon{
+    flex:none;width:20px;height:20px;position:relative;
+  }
+  .faq-q .faq-icon::before,.faq-q .faq-icon::after{
+    content:"";position:absolute;background:var(--ink);border-radius:2px;
+    transition:transform .2s ease,opacity .2s ease;
+  }
+  .faq-q .faq-icon::before{left:0;top:9px;width:20px;height:2px;}
+  .faq-q .faq-icon::after{left:9px;top:0;width:2px;height:20px;}
+  .faq-item.open .faq-q .faq-icon::after{transform:rotate(90deg);opacity:0;}
+  .faq-a{
+    max-height:0;overflow:hidden;transition:max-height .25s ease;
+  }
+  .faq-item.open .faq-a{max-height:260px;}
+  .faq-a p{
+    padding:0 4px 18px;font-size:14.5px;line-height:1.6;color:var(--ink-70);
+  }
+
+  /* ---------- MODAL ---------- */
+  .modal-overlay{
+    position:fixed;inset:0;z-index:200;
+    background:rgba(6,6,8,.6);
+    display:flex;align-items:center;justify-content:center;
+    padding:20px;
+    opacity:0;pointer-events:none;
+    transition:opacity .2s ease;
+  }
+  .modal-overlay.show{opacity:1;pointer-events:auto;}
+  .modal-box{
+    background:#fff;border-radius:24px;
+    max-width:560px;width:100%;max-height:80vh;overflow-y:auto;
+    padding:32px 28px;position:relative;
+    box-shadow:var(--shadow-soft);
+  }
+  .modal-close{
+    position:absolute;top:18px;right:18px;
+    width:32px;height:32px;border-radius:50%;border:none;
+    background:var(--mist);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;color:var(--ink-70);
+  }
+  .modal-close:hover{background:var(--mist-2);color:var(--ink);}
+  .modal-box h2{
+    font-size:1.5rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:14px;padding-right:30px;
+  }
+  .modal-box h3{
+    font-size:14px;font-weight:700;margin:20px 0 6px;
+  }
+  .modal-box p{
+    font-size:14.5px;line-height:1.65;color:var(--ink-70);margin-bottom:10px;
+  }
+  .modal-box a.modal-link{color:var(--signal-dim);font-weight:600;text-decoration:none;}
+  .modal-box a.modal-link:hover{text-decoration:underline;}
+  .modal-tldr{
+    background:var(--mist);border-radius:var(--radius);padding:16px 18px;
+    font-size:13.5px;line-height:1.65;color:var(--ink-70);margin-bottom:18px;
+  }
+  .modal-tldr strong{color:var(--ink);}
+
+  @media (max-width:520px){
+    .footer-inner{justify-content:flex-start;}
+  }
+
+  @media (min-width:860px){
+    .hero .wrap{flex-direction:row;align-items:center;justify-content:space-between;}
+    .hero-copy{flex:1;max-width:520px;}
+    .hero-visual{flex:1;justify-content:flex-end;}
+    .hero{padding:88px 0 100px;}
+    .form-card{padding:44px 44px 40px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001s !important;transition-duration:.001s !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="site-bg" aria-hidden="true">
+  <video class="hero-clip active" data-clip="walk" muted playsinline preload="auto"
+    poster="https://images.pexels.com/videos/29436698/pexels-photo-29436698.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1200">
+    <source src="https://videos.pexels.com/video-files/29436698/12672149_1440_2560_30fps.mp4" type="video/mp4">
+  </video>
+  <video class="hero-clip" data-clip="fireworks" muted playsinline preload="none"
+    poster="https://images.pexels.com/videos/17604845/fireworks-happy-couple-watching-fireworks-17604845.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1200">
+    <source src="https://videos.pexels.com/video-files/17604845/17604845-hd_1920_1080_25fps.mp4" type="video/mp4">
+  </video>
+  <video class="hero-clip" data-clip="beach" muted playsinline preload="none"
+    poster="https://images.pexels.com/videos/9121275/pexels-photo-9121275.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1200">
+    <source src="https://videos.pexels.com/video-files/9121275/9121275-uhd_2560_1440_25fps.mp4" type="video/mp4">
+  </video>
+  <div class="site-scrim"></div>
+</div>
+
+<div class="brandmark">Future</div>
+
+<section class="hero" id="hero">
+  <div class="hero-scrim" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <div class="hero-copy">
+      <h1>Find a date,<br>not another chat.</h1>
+      <p class="sub">AI interviews you, finds someone who actually matches your personality, then books your first date.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" id="heroCta">Join Waitlist</button>
+        <span class="hero-note">Free to join · No credit card</span>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="phone-mock">
+        <span class="side-btn btn-mute" aria-hidden="true"></span>
+        <span class="side-btn btn-vol-up" aria-hidden="true"></span>
+        <span class="side-btn btn-vol-down" aria-hidden="true"></span>
+        <span class="side-btn btn-power" aria-hidden="true"></span>
+        <div class="phone-screen">
+          <span class="dynamic-island" aria-hidden="true"></span>
+
+          <div class="scene scene-interview active" style="background-image:url('https://images.pexels.com/photos/5911280/pexels-photo-5911280.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=900&amp;h=1900&amp;fit=crop')">
+            <div class="scene-scrim"></div>
+            <div class="scene-content">
+              <span class="scene-tag">AI Interview</span>
+              <div class="glass-card">
+                <div class="bubble-row">
+                  <div class="bubble ai">Hey! What's your idea of a perfect Sunday?</div>
+                  <div class="bubble me">Farmers market, then a nap 😴</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="scene scene-match" style="background-image:url('https://images.unsplash.com/photo-1596476792213-b30b2dc0e7c5?auto=format&amp;fit=crop&amp;w=900&amp;h=1900&amp;q=80')">
+            <div class="scene-scrim"></div>
+            <div class="scene-content">
+              <span class="scene-tag">Match Found</span>
+              <div class="glass-card">
+                <div class="match-name">Ananya, 27</div>
+                <div class="match-sub">Loves beach walks & indie music</div>
+                <span class="match-pct">92% personality match</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="scene scene-booked" style="background-image:url('https://images.pexels.com/photos/20368053/pexels-photo-20368053.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=900&amp;h=1900&amp;fit=crop')">
+            <div class="scene-scrim"></div>
+            <div class="scene-content">
+              <span class="scene-tag">First Date</span>
+              <div class="glass-card">
+                <div class="booked-tag">Confirmed</div>
+                <div class="booked-title">Pottery class booked</div>
+                <div class="booked-sub">Saturday, 6:00 PM · Studio Mitti</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="form-section" id="waitlist">
+  <div class="wrap">
+    <div class="form-eyebrow-block">
+      <h2>Join the early access list</h2>
+      <p>Six quick steps. Two minutes. Priority access when we launch.</p>
+    </div>
+
+    <form class="form-card" id="formCard" novalidate>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-meta">
+        <span class="step-count">Step <span id="stepNum">1</span> of 6</span>
+        <span class="step-title" id="stepTitle">Basic Details</span>
+      </div>
+
+      <!-- STEP 1 -->
+      <div class="step" data-step="1">
+        <h3>Basic details</h3>
+        <p class="step-sub">So we know who you are and where to find you.</p>
+
+        <div class="field" data-required="text">
+          <label>First name</label>
+          <input type="text" id="firstName" autocomplete="given-name">
+        </div>
+        <div class="field" data-required="text">
+          <label>Age</label>
+          <input type="number" id="age" min="18" max="99" autocomplete="off">
+        </div>
+        <div class="field" data-required="pill">
+          <label>Gender</label>
+          <div class="pill-group" data-group="gender">
+            <div class="pill" data-value="Male">Male</div>
+            <div class="pill" data-value="Female">Female</div>
+            <div class="pill" data-value="Other">Other</div>
+          </div>
+        </div>
+        <div class="field" data-required="pill">
+          <label>Looking for</label>
+          <div class="pill-group" data-group="lookingFor">
+            <div class="pill" data-value="Men">Men</div>
+            <div class="pill" data-value="Women">Women</div>
+            <div class="pill" data-value="Everyone">Everyone</div>
+          </div>
+        </div>
+        <div class="field" data-required="text">
+          <label>Phone number</label>
+          <input type="tel" id="phone" autocomplete="tel">
+        </div>
+        <div class="field" data-required="text">
+          <label>Email</label>
+          <input type="email" id="email" autocomplete="email">
+        </div>
+        <div class="field">
+          <label>Instagram <span class="optional">(optional)</span></label>
+          <input type="text" id="instagram" placeholder="@handle">
+        </div>
+        <div class="field" data-required="text">
+          <label>City</label>
+          <input type="text" id="city" list="cityList" placeholder="e.g. Mumbai">
+          <datalist id="cityList">
+            <option value="Mumbai"><option value="Delhi"><option value="Bengaluru">
+            <option value="Lucknow"><option value="Pune"><option value="Hyderabad">
+            <option value="Chennai"><option value="Kolkata"><option value="Ahmedabad">
+          </datalist>
+        </div>
+        <p class="error-msg">Please fill in the required fields to continue.</p>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step" data-step="2" hidden>
+        <h3>Dating experience</h3>
+        <p class="step-sub">Tell us what dating has looked like so far.</p>
+
+        <div class="field" data-required="pill">
+          <label>How many serious relationships have you had?</label>
+          <div class="pill-group" data-group="relationships">
+            <div class="pill" data-value="None">None</div>
+            <div class="pill" data-value="1">1</div>
+            <div class="pill" data-value="2–3">2–3</div>
+            <div class="pill" data-value="4+">4+</div>
+          </div>
+        </div>
+        <div class="field" data-required="pill">
+          <label>How often do you go on dates?</label>
+          <div class="pill-group" data-group="dateFrequency">
+            <div class="pill" data-value="Never">Never</div>
+            <div class="pill" data-value="Few times a year">Few times a year</div>
+            <div class="pill" data-value="Monthly">Monthly</div>
+            <div class="pill" data-value="Weekly">Weekly</div>
+          </div>
+        </div>
+        <div class="field" data-required="checkbox">
+          <label>What's your biggest frustration with dating apps?</label>
+          <div class="pill-group" data-group="frustrations" data-multi="true">
+            <div class="pill" data-value="Endless texting">Endless texting</div>
+            <div class="pill" data-value="Ghosting">Ghosting</div>
+            <div class="pill" data-value="Fake profiles">Fake profiles</div>
+            <div class="pill" data-value="No serious people">No serious people</div>
+            <div class="pill" data-value="Matches never meet">Matches never meet</div>
+            <div class="pill" data-value="Expensive dates">Expensive dates</div>
+            <div class="pill other-pill" data-value="Other">Other</div>
+          </div>
+          <div class="other-input" id="frustrationOtherWrap">
+            <input type="text" id="frustrationOther" placeholder="Tell us more">
+          </div>
+        </div>
+        <p class="error-msg">Please answer all questions to continue.</p>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step" data-step="3" hidden>
+        <h3>Personality</h3>
+        <p class="step-sub">This helps our AI actually understand you.</p>
+
+        <div class="field" data-required="text">
+          <label>Describe yourself in one sentence</label>
+          <textarea id="oneSentence"></textarea>
+        </div>
+        <div class="field" data-required="text">
+          <label>What do people usually compliment you on?</label>
+          <textarea id="compliments"></textarea>
+        </div>
+        <div class="field" data-required="pill">
+          <label>Which matters most?</label>
+          <div class="pill-group" data-group="matters">
+            <div class="pill" data-value="Looks">Looks</div>
+            <div class="pill" data-value="Personality">Personality</div>
+            <div class="pill" data-value="Ambition">Ambition</div>
+            <div class="pill" data-value="Humor">Humor</div>
+            <div class="pill" data-value="Kindness">Kindness</div>
+          </div>
+        </div>
+        <p class="error-msg">Please answer all questions to continue.</p>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="step" data-step="4" hidden>
+        <h3>AI date preferences</h3>
+        <p class="step-sub">How much control are you comfortable handing over?</p>
+
+        <div class="field" data-required="pill">
+          <label>Would you let AI choose your first date?</label>
+          <div class="pill-group" data-group="aiChoose">
+            <div class="pill" data-value="Yes">Yes</div>
+            <div class="pill" data-value="Maybe">Maybe</div>
+            <div class="pill" data-value="No">No</div>
+          </div>
+        </div>
+
+        <div class="field" data-required="pill">
+          <label>Would you pay ₹499–999 if it included:</label>
+          <div class="bundle-card">
+            <ul>
+              <li>✓ Restaurant booking</li>
+              <li>✓ Movie tickets</li>
+              <li>✓ Pottery class</li>
+              <li>✓ Bowling</li>
+              <li>✓ Café reservation</li>
+            </ul>
+          </div>
+          <div class="pill-group" data-group="wouldPay">
+            <div class="pill" data-value="Yes">Yes</div>
+            <div class="pill" data-value="Depends">Depends</div>
+            <div class="pill" data-value="No">No</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>How much would you spend on a first date?</label>
+          <div class="slider-block">
+            <div class="slider-value">₹<span id="budgetValue">2,250</span></div>
+            <input type="range" id="budgetSlider" min="500" max="5000" step="50" value="2250">
+            <div class="slider-labels"><span>₹500</span><span>₹5,000+</span></div>
+          </div>
+        </div>
+
+        <div class="field" data-required="checkbox">
+          <label>Which dates sound exciting?</label>
+          <div class="pill-group" data-group="excitingDates" data-multi="true">
+            <div class="pill" data-value="Coffee">Coffee</div>
+            <div class="pill" data-value="Movie">Movie</div>
+            <div class="pill" data-value="Pottery">Pottery</div>
+            <div class="pill" data-value="Arcade">Arcade</div>
+            <div class="pill" data-value="Bowling">Bowling</div>
+            <div class="pill" data-value="Rooftop dinner">Rooftop dinner</div>
+            <div class="pill" data-value="Art gallery">Art gallery</div>
+            <div class="pill" data-value="Walk + Ice Cream">Walk + Ice Cream</div>
+            <div class="pill" data-value="Escape Room">Escape Room</div>
+            <div class="pill" data-value="Live Music">Live Music</div>
+          </div>
+        </div>
+        <p class="error-msg">Please answer all questions to continue.</p>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="step" data-step="5" hidden>
+        <h3>Future features</h3>
+        <p class="step-sub">What should we build next?</p>
+
+        <div class="field" data-required="checkbox">
+          <label>Interested in:</label>
+          <div class="pill-group" data-group="futureFeatures" data-multi="true">
+            <div class="pill" data-value="AI Matchmaking">AI Matchmaking</div>
+            <div class="pill" data-value="AI Profile Creation">AI Profile Creation</div>
+            <div class="pill" data-value="Verified Profiles">Verified Profiles</div>
+            <div class="pill" data-value="Prepaid Dates">Prepaid Dates</div>
+            <div class="pill" data-value="Double Dates">Double Dates</div>
+            <div class="pill" data-value="Blind Dates">Blind Dates</div>
+            <div class="pill" data-value="Video Introductions">Video Introductions</div>
+          </div>
+        </div>
+        <p class="error-msg">Please select at least one option to continue.</p>
+      </div>
+
+      <!-- STEP 6 -->
+      <div class="step" data-step="6" hidden>
+        <h3>Last one</h3>
+        <p class="step-sub">Then you're on the list.</p>
+
+        <div class="field" data-required="text">
+          <label>If you could fix ONE thing about dating today, what would it be?</label>
+          <textarea class="large" id="fixThing"></textarea>
+        </div>
+        <p class="error-msg">Please share your answer to join the waitlist.</p>
+      </div>
+
+      <div class="step-actions" id="stepActions">
+        <button type="button" class="btn-ghost" id="backBtn" hidden>Back</button>
+        <button type="button" class="btn-primary" id="nextBtn">Continue</button>
+        <button type="submit" class="btn-primary" id="submitBtn" hidden>Join Waitlist</button>
+      </div>
+    </form>
+
+    <div class="thank-you" id="thankYou" hidden>
+      <div class="check-circle">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h2>You're in.</h2>
+      <p class="ty-copy">Future is launching city by city across India. You'll get priority access, exclusive beta invites, and free premium months for helping us build it.</p>
+      <ul class="perks">
+        <li>Priority access when we launch in your city</li>
+        <li>Exclusive invites to the private beta</li>
+        <li>Free premium months for early members</li>
+      </ul>
+      <div class="position-block">
+        <div class="position-label">Your position</div>
+        <div class="position-number">#<span id="positionNum">0</span><span>/10,000</span></div>
+      </div>
+      <button class="share-btn" id="shareBtn">Share Future to move up the list</button>
+      <p class="share-note" id="shareNote">Your friends move you up 20 spots each.</p>
+    </div>
+  </div>
+</section>
+
+<section class="faq-section" id="faq">
+  <div class="wrap">
+    <div class="faq-card">
+      <h2>Frequently asked questions</h2>
+
+      <div class="faq-item">
+        <button class="faq-q" type="button">
+          Why am I on the waitlist?
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-a">
+          <p>Future is rolling out city by city so every new member gets a matchmaker who actually knows their city and can find good matches nearby. The waitlist lets us bring people in gradually as we open up each city, instead of launching everywhere at once and stretching the experience thin.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" type="button">
+          When will I get off the waitlist?
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-a">
+          <p>It depends on your position and how fast your city fills up. Signing up early helps, and sharing your invite link moves you up the list faster since referred friends jump you ahead. We'll email you the moment your spot opens up.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" type="button">
+          How long does it take to chat with the matchmaker?
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-a">
+          <p>Once you're off the waitlist, your first conversation with the matchmaker usually takes about 10-15 minutes. It asks about who you are, what you're looking for, and your dating preferences so it can start finding better matches for you right away.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" type="button">
+          What is the Future Dates feature?
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-a">
+          <p>Future Dates is our done-for-you date planning feature. Once two people match and both opt in, each side puts in a small amount toward the date, and Future takes care of picking and booking a nearby cafe or activity that suits you both — so instead of endless back-and-forth over "where should we go," you just show up.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <ul class="footer-links">
+      <li><a href="https://www.instagram.com/heyfuture.ai/" target="_blank" rel="noopener">Instagram</a></li>
+      <li><a href="#">X</a></li>
+      <li><a href="#" data-modal="support">Support</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <ul class="footer-links footer-links-secondary">
+      <li><a href="#">Careers</a></li>
+      <li><a href="#" data-modal="about">About Us</a></li>
+      <li><a href="#" data-modal="legal">Legal</a></li>
+      <li class="footer-copy">© 2026</li>
+    </ul>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+
+  <div class="modal-box" data-panel="about" hidden>
+    <button class="modal-close" type="button" data-close-modal>&times;</button>
+    <h2>About Us</h2>
+    <p>We're a small team of engineers trying to shape the Future.</p>
+    <p>Created by Aman Singh and Siddharth Nishad.</p>
+  </div>
+
+  <div class="modal-box" data-panel="legal" hidden>
+    <button class="modal-close" type="button" data-close-modal>&times;</button>
+    <h2>Legal</h2>
+    <div class="modal-tldr">
+      <strong>TL;DR</strong> — we only collect what we need to match you well, we don't sell your info, and you can cancel or delete your account anytime. Be kind, be safe, and we'll handle the rest.
+    </div>
+
+    <h3>Privacy Policy</h3>
+    <p>We collect the information you give us when you join the waitlist and use Future — things like your basic details, preferences, and conversations with the matchmaker — solely to find you better matches and improve the experience. We do not sell your personal data to third parties, and we only share it with the people and services needed to run the app (like payment processing for Future Dates or basic infrastructure providers), under confidentiality obligations. You can request a copy of your data, ask us to correct it, or delete your account and associated data at any time by contacting us at support@heyfuture.site.</p>
+
+    <h3>Terms of Service</h3>
+    <p>By joining the waitlist or using Future, you agree to use the app respectfully and honestly — accurate profile information, no harassment, no impersonation, and no using the platform to harm or deceive other members. Future Dates bookings are subject to availability and the policies of the venues involved. We reserve the right to suspend accounts that violate these terms. We may update these terms as the product evolves, and we'll let you know when we do.</p>
+
+    <h3>SMS Terms</h3>
+    <p>If you provide a phone number, you agree to receive SMS messages from Future related to your waitlist status, account, and matches. Message and data rates may apply. You can opt out at any time by replying STOP, or by emailing support@heyfuture.site.</p>
+  </div>
+
+  <div class="modal-box" data-panel="support" hidden>
+    <button class="modal-close" type="button" data-close-modal>&times;</button>
+    <h2>Support</h2>
+    <p>Need help, have feedback, or just want to say hi? We read every message ourselves.</p>
+    <p>Email us at <a class="modal-link" href="mailto:support@heyfuture.site">support@heyfuture.site</a> and we'll get back to you as soon as we can.</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- Hero background video cycler ----
+  // Advances on each clip's natural 'ended' event, so a clip is never
+  // seen restarting/looping mid-display (each plays through exactly once).
+  const heroClips = Array.from(document.querySelectorAll('.hero-clip'));
+  if(heroClips.length){
+    let hIdx = 0;
+    function playClip(i){
+      const clip = heroClips[i];
+      clip.currentTime = 0;
+      clip.play().catch(()=>{});
+    }
+    function advance(){
+      const current = heroClips[hIdx];
+      hIdx = (hIdx+1) % heroClips.length;
+      const next = heroClips[hIdx];
+      next.classList.add('active');
+      current.classList.remove('active');
+      setTimeout(()=> current.pause(), 1650);
+      if(!reduceMotion) playClip(hIdx);
+    }
+    heroClips.forEach(clip => clip.addEventListener('ended', advance));
+    if(!reduceMotion) playClip(0);
+  }
+
+  // ---- Hero scene cycler ----
+  const scenes = document.querySelectorAll('.scene');
+  if(!reduceMotion && scenes.length){
+    let idx = 0;
+    setInterval(()=>{
+      scenes[idx].classList.remove('active');
+      idx = (idx+1) % scenes.length;
+      scenes[idx].classList.add('active');
+    }, 3200);
+  }
+
+  // ---- Scroll to form ----
+  document.getElementById('heroCta').addEventListener('click', scrollToForm);
+  function scrollToForm(){
+    document.getElementById('waitlist').scrollIntoView({behavior: reduceMotion ? 'auto' : 'smooth'});
+  }
+
+  // ---- Pill groups ----
+  const state = {};
+  document.querySelectorAll('.pill-group').forEach(group=>{
+    const key = group.dataset.group;
+    const multi = group.dataset.multi === 'true';
+    state[key] = multi ? [] : '';
+    group.querySelectorAll('.pill').forEach(pill=>{
+      pill.addEventListener('click', ()=>{
+        const val = pill.dataset.value;
+        if(multi){
+          if(pill.classList.contains('selected')){
+            pill.classList.remove('selected');
+            state[key] = state[key].filter(v=>v!==val);
+          } else {
+            pill.classList.add('selected');
+            state[key].push(val);
+          }
+        } else {
+          group.querySelectorAll('.pill').forEach(p=>p.classList.remove('selected'));
+          pill.classList.add('selected');
+          state[key] = val;
+        }
+        if(key === 'frustrations'){
+          const wrap = document.getElementById('frustrationOtherWrap');
+          wrap.classList.toggle('show', state.frustrations.includes('Other'));
+        }
+        clearStepError(pill.closest('.step'));
+      });
+    });
+  });
+
+  // ---- Budget slider ----
+  const slider = document.getElementById('budgetSlider');
+  const budgetValue = document.getElementById('budgetValue');
+  function formatBudget(v){
+    return Number(v) >= 5000 ? '5,000+' : Number(v).toLocaleString('en-IN');
+  }
+  slider.addEventListener('input', ()=> budgetValue.textContent = formatBudget(slider.value));
+
+  // ---- Multi-step logic ----
+  const steps = Array.from(document.querySelectorAll('.step'));
+  const titles = ['Basic Details','Dating Experience','Personality','AI Date Preferences','Future Features','Final Question'];
+  let current = 0;
+  const progressFill = document.getElementById('progressFill');
+  const stepNum = document.getElementById('stepNum');
+  const stepTitle = document.getElementById('stepTitle');
+  const backBtn = document.getElementById('backBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const submitBtn = document.getElementById('submitBtn');
+  const stepActions = document.getElementById('stepActions');
+
+  function render(){
+    steps.forEach((s,i)=> s.hidden = i !== current);
+    progressFill.style.width = ((current+1)/steps.length*100)+'%';
+    stepNum.textContent = current+1;
+    stepTitle.textContent = titles[current];
+    backBtn.hidden = current === 0;
+    stepActions.classList.toggle('has-back', current !== 0);
+    const last = current === steps.length-1;
+    nextBtn.hidden = last;
+    submitBtn.hidden = !last;
+  }
+
+  function clearStepError(stepEl){
+    if(!stepEl) return;
+    stepEl.querySelectorAll('.field-error').forEach(f=>f.classList.remove('field-error'));
+    const msg = stepEl.querySelector('.error-msg');
+    if(msg) msg.classList.remove('show');
+  }
+
+  function validateStep(i){
+    const stepEl = steps[i];
+    let valid = true;
+    stepEl.querySelectorAll('[data-required]').forEach(field=>{
+      const type = field.dataset.required;
+      let ok = true;
+      if(type === 'text'){
+        const input = field.querySelector('input, textarea');
+        ok = input.value.trim().length > 0;
+      } else if(type === 'pill'){
+        const group = field.querySelector('.pill-group');
+        ok = !!state[group.dataset.group] && state[group.dataset.group].length !== 0;
+      } else if(type === 'checkbox'){
+        const group = field.querySelector('.pill-group');
+        ok = state[group.dataset.group].length > 0;
+      }
+      field.classList.toggle('field-error', !ok);
+      if(!ok) valid = false;
+    });
+    const msg = stepEl.querySelector('.error-msg');
+    if(msg) msg.classList.toggle('show', !valid);
+    return valid;
+  }
+
+  nextBtn.addEventListener('click', ()=>{
+    if(!validateStep(current)) return;
+    current = Math.min(current+1, steps.length-1);
+    render();
+    document.getElementById('formCard').scrollIntoView({behavior: reduceMotion ? 'auto':'smooth', block:'start'});
+  });
+
+  backBtn.addEventListener('click', ()=>{
+    current = Math.max(current-1, 0);
+    render();
+  });
+
+  document.getElementById('formCard').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    if(!validateStep(current)) return;
+
+    const formCard = document.getElementById('formCard');
+    const thankYou = document.getElementById('thankYou');
+    formCard.hidden = true;
+    thankYou.hidden = false;
+
+    const posNum = document.getElementById('positionNum');
+    const target = 300 + Math.floor(Math.random()*450);
+    let n = 0;
+    const step = Math.max(1, Math.round(target/40));
+    const timer = setInterval(()=>{
+      n += step;
+      if(n >= target){ n = target; clearInterval(timer); }
+      posNum.textContent = n.toLocaleString('en-IN');
+    }, 20);
+
+    thankYou.scrollIntoView({behavior: reduceMotion ? 'auto':'smooth', block:'start'});
+  });
+
+  document.getElementById('shareBtn').addEventListener('click', ()=>{
+    const note = document.getElementById('shareNote');
+    if(navigator.clipboard){
+      navigator.clipboard.writeText('https://future.app/invite').catch(()=>{});
+    }
+    note.textContent = 'Link copied — send it to a friend!';
+  });
+
+  // ---- FAQ accordion ----
+  document.querySelectorAll('.faq-item').forEach(item=>{
+    item.querySelector('.faq-q').addEventListener('click', ()=>{
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+      if(!wasOpen) item.classList.add('open');
+    });
+  });
+
+  // ---- Modals (About, Legal, Support) ----
+  const overlay = document.getElementById('modalOverlay');
+  const panels = Array.from(overlay.querySelectorAll('.modal-box'));
+  function openModal(name){
+    panels.forEach(p => p.hidden = p.dataset.panel !== name);
+    overlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(){
+    overlay.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+  document.querySelectorAll('[data-modal]').forEach(trigger=>{
+    trigger.addEventListener('click', (e)=>{
+      e.preventDefault();
+      openModal(trigger.dataset.modal);
+    });
+  });
+  overlay.querySelectorAll('[data-close-modal]').forEach(btn=> btn.addEventListener('click', closeModal));
+  overlay.addEventListener('click', (e)=>{ if(e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeModal(); });
+
+  render();
+})();
+</script>
+</body>
+</html>
