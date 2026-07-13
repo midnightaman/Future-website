@@ -1109,26 +1109,85 @@
     render();
   });
 
-  document.getElementById('formCard').addEventListener('submit', (e)=>{
+  // ==== Web3Forms config ====
+  // Get a free access key instantly at https://web3forms.com — just enter the
+  // email address where you want waitlist signups to arrive, no account needed.
+  // Paste the key it gives you below.
+  const WEB3FORMS_ACCESS_KEY = '365b50ec-a7a3-4721-90e8-17bb6b072c57';
+
+  function gatherFormData(){
+    return {
+      access_key: WEB3FORMS_ACCESS_KEY,
+      subject: 'New Future waitlist signup',
+      from_name: 'Future Waitlist Form',
+      email: document.getElementById('email').value.trim(),
+      First_Name: document.getElementById('firstName').value.trim(),
+      Age: document.getElementById('age').value.trim(),
+      Gender: state.gender,
+      Looking_For: state.lookingFor,
+      Phone: document.getElementById('phone').value.trim(),
+      Instagram: document.getElementById('instagram').value.trim(),
+      City: document.getElementById('city').value.trim(),
+      Relationships_Had: state.relationships,
+      Date_Frequency: state.dateFrequency,
+      Frustrations: (state.frustrations || []).join(', '),
+      Frustration_Other: document.getElementById('frustrationOther').value.trim(),
+      One_Sentence_Description: document.getElementById('oneSentence').value.trim(),
+      Compliments: document.getElementById('compliments').value.trim(),
+      What_Matters_Most: state.matters,
+      Would_Let_AI_Choose_Date: state.aiChoose,
+      Would_Pay_For_Bundle: state.wouldPay,
+      First_Date_Budget: '₹' + formatBudget(document.getElementById('budgetSlider').value),
+      Exciting_Dates: (state.excitingDates || []).join(', '),
+      Future_Features_Interested: (state.futureFeatures || []).join(', '),
+      Fix_One_Thing: document.getElementById('fixThing').value.trim()
+    };
+  }
+
+  document.getElementById('formCard').addEventListener('submit', async (e)=>{
     e.preventDefault();
     if(!validateStep(current)) return;
 
-    const formCard = document.getElementById('formCard');
-    const thankYou = document.getElementById('thankYou');
-    formCard.hidden = true;
-    thankYou.hidden = false;
+    const submitBtn = document.getElementById('submitBtn');
+    const originalLabel = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting…';
 
-    const posNum = document.getElementById('positionNum');
-    const target = 300 + Math.floor(Math.random()*450);
-    let n = 0;
-    const step = Math.max(1, Math.round(target/40));
-    const timer = setInterval(()=>{
-      n += step;
-      if(n >= target){ n = target; clearInterval(timer); }
-      posNum.textContent = n.toLocaleString('en-IN');
-    }, 20);
+    try{
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(gatherFormData())
+      });
+      const result = await res.json();
+      if(!result.success){ throw new Error(result.message || 'Submission failed'); }
 
-    thankYou.scrollIntoView({behavior: reduceMotion ? 'auto':'smooth', block:'start'});
+      const formCard = document.getElementById('formCard');
+      const thankYou = document.getElementById('thankYou');
+      formCard.hidden = true;
+      thankYou.hidden = false;
+
+      const posNum = document.getElementById('positionNum');
+      const target = 300 + Math.floor(Math.random()*450);
+      let n = 0;
+      const step = Math.max(1, Math.round(target/40));
+      const timer = setInterval(()=>{
+        n += step;
+        if(n >= target){ n = target; clearInterval(timer); }
+        posNum.textContent = n.toLocaleString('en-IN');
+      }, 20);
+
+      thankYou.scrollIntoView({behavior: reduceMotion ? 'auto':'smooth', block:'start'});
+    } catch(err){
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalLabel;
+      const stepEl = steps[current];
+      const msg = stepEl.querySelector('.error-msg');
+      if(msg){
+        msg.textContent = 'Something went wrong sending your response — please try again, or email support@heyfuture.site.';
+        msg.classList.add('show');
+      }
+    }
   });
 
   document.getElementById('shareBtn').addEventListener('click', ()=>{
