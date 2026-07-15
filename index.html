@@ -200,22 +200,8 @@ a{ color:inherit; }
 .key-left { left:14%; }
 .key-right{ left:84%; }
 
-/* ---------- the app's intro rule ----------
-   Intro.tsx draws a hairline across the frame before the wordmark
-   rises. Same thing here: 1px, 45% white, out to 55% width, on the
-   app's cubic curve. It sits above the word — never through it. */
-
-.draw-rule{
-  width:min(420px, 55vw);
-  height:1px;
-  margin:0 auto clamp(20px, 3.4vh, 30px);
-  background:linear-gradient(90deg, transparent, rgba(255,255,255,.45) 22%, rgba(255,255,255,.45) 78%, transparent);
-  transform:scaleX(0);
-  transform-origin:50% 50%;
-  transition:transform .8s var(--ease-app);
-  transition-delay:300ms;
-}
-.hero.lit .draw-rule{ transform:scaleX(1); }
+/* The hero carries no key light and no rule — the wordmark sits on
+   pure black and is the only thing in the frame. */
 
 /* ============================================================
    HERO — the title card
@@ -276,14 +262,13 @@ a{ color:inherit; }
   letter-spacing:-0.045em;
   margin:0;
   color:var(--white);
-  text-shadow:
-    0 0 140px rgba(255,255,255,.42),
-    0 0 50px  rgba(255,255,255,.18);
+  /* no shadow — clean white type. The hero scrim below does the
+     legibility work instead, so the letterforms stay crisp. */
 
   opacity:0;
   transform:translateY(30px);
   transition:opacity 1s var(--ease-app), transform 1s var(--ease-app);
-  transition-delay:950ms;           /* picks up as the rule lands */
+  transition-delay:250ms;
 }
 .hero.lit .wordmark{ opacity:1; transform:none; }
 
@@ -296,10 +281,11 @@ a{ color:inherit; }
   color:var(--paper);
   margin:clamp(14px,2.4vh,26px) 0 0;
   letter-spacing:-0.01em;
+  text-shadow:0 2px 24px rgba(0,0,0,.9);
 
   opacity:0;
   transition:opacity .65s var(--ease-app);
-  transition-delay:1800ms;
+  transition-delay:1050ms;
 }
 .hero.lit .tagline{ opacity:1; }
 
@@ -312,7 +298,8 @@ a{ color:inherit; }
 .hero-sub{
   margin:0; max-width:38ch;
   font-size:clamp(13.5px,1.4vw,15.5px);
-  line-height:1.7; color:var(--grey-1); font-weight:300;
+  line-height:1.7; color:var(--paper); font-weight:300;
+  text-shadow:0 2px 20px rgba(0,0,0,.9);
 }
 
 .hero-note{
@@ -502,9 +489,12 @@ a{ color:inherit; }
   flex:1; height:42px; border-radius:999px;
   display:grid; place-items:center; font-size:12.5px; font-weight:700;
 }
-.ui-pass{ border:1px solid var(--line-2); color:var(--paper); }
+/* exactly the app's match.tsx styles:
+   passBtn   → borderColor theme.colors.borderStrong, text textSecondary
+   acceptBtn → backgroundColor theme.colors.rose (#FFFFFF), text #000000 */
+.ui-pass{ border:1px solid var(--line-2); color:var(--grey-1); font-weight:500; }
 .ui-accept{
-  background:var(--gold); color:var(--dark-ink);
+  background:var(--white); color:#000000; font-weight:600;
   box-shadow:0 0 30px rgba(255,255,255,.28);
 }
 
@@ -562,21 +552,26 @@ a{ color:inherit; }
   overflow:hidden;
 }
 
-/* the widest shot — a photo carries this scene, not a light */
-.scene-photo{
-  position:absolute; inset:0; z-index:-1; overflow:hidden;
-}
+/* ============================================================
+   SCENE PHOTOGRAPHY
+   A photo carries the scene instead of a light. Each one fades
+   in only once it decodes, over the black — so a dead link just
+   leaves the section clean rather than broken.
+   ============================================================ */
+
+.scene-photo{ position:absolute; inset:0; z-index:-1; overflow:hidden; }
+
 .scene-photo img{
   width:100%; height:100%; object-fit:cover;
   opacity:0;
   transform:scale(1.1);
-  transition:opacity 2.2s var(--ease-app), transform 14s linear;
+  transition:opacity 2.2s var(--ease-app), transform 16s linear;
 }
 .scene-photo img.on{ opacity:1; transform:scale(1); }
 
-/* Scrim: open through the middle so the couple stays visible and
-   lit, heavy top and bottom so the type never sits on busy pixels
-   and the frame melts into the black sections either side. */
+/* Default scrim: open through the middle so the couple stays visible
+   and lit, heavy top and bottom so type never sits on busy pixels and
+   the frame melts into the black sections either side. */
 .scene-photo::after{
   content:''; position:absolute; inset:0; z-index:2;
   background:
@@ -587,6 +582,60 @@ a{ color:inherit; }
       rgba(0,0,0,.62) 72%,
       var(--ink) 100%),
     radial-gradient(120% 78% at 50% 50%, transparent 30%, rgba(0,0,0,.55) 100%);
+}
+
+/* The wordmark carries no shadow at all, so this scrim has to buy the
+   legibility on its own: a deep pool centred where "Future" sits, with
+   the photo opening back up toward the top and edges. */
+.scene-photo-hero::after{
+  background:
+    radial-gradient(100% 54% at 50% 58%, rgba(0,0,0,.76) 0%, rgba(0,0,0,.44) 48%, transparent 80%),
+    linear-gradient(180deg,
+      rgba(0,0,0,.44) 0%,
+      rgba(0,0,0,.20) 20%,
+      rgba(0,0,0,.36) 44%,
+      rgba(0,0,0,.80) 74%,
+      var(--ink) 100%);
+}
+
+/* The phone is the subject here, so the photo drops right back and
+   only lifts at the far edges — enough to kill the dead black, not
+   enough to compete with the device. */
+.scene-photo-back::after{
+  background:
+    radial-gradient(90% 65% at 42% 50%, rgba(0,0,0,.94) 0%, rgba(0,0,0,.86) 55%, rgba(0,0,0,.68) 100%),
+    linear-gradient(180deg, var(--ink) 0%, transparent 18%, transparent 82%, var(--ink) 100%);
+}
+
+/* Text sits centred over the photo — hold it back, but these are
+   silhouettes, so leave enough light for the shape to survive. */
+.scene-photo-dim::after{
+  background:
+    radial-gradient(110% 70% at 50% 50%, rgba(0,0,0,.72) 0%, rgba(0,0,0,.56) 50%, rgba(0,0,0,.34) 100%),
+    linear-gradient(180deg, var(--ink) 0%, transparent 20%, transparent 80%, var(--ink) 100%);
+}
+
+/* Fog scatters light, so this photo is bright rather than dark — the
+   opposite problem to the silhouettes. It needs a heavier hand, and a
+   slight desaturation so it greys into the monochrome instead of
+   sitting there as the one warm thing on the page. */
+.scene-photo-fog img{ filter:grayscale(.55) contrast(1.05) brightness(.72); }
+.scene-photo-fog::after{
+  background:
+    radial-gradient(115% 74% at 50% 50%, rgba(0,0,0,.80) 0%, rgba(0,0,0,.66) 52%, rgba(0,0,0,.48) 100%),
+    linear-gradient(180deg, var(--ink) 0%, transparent 22%, transparent 78%, var(--ink) 100%);
+}
+
+/* Side-lit scene: photo held to one half, dissolving into the black
+   the copy sits on, rather than sitting behind the text. */
+.scene-photo-side::after{
+  background:
+    linear-gradient(90deg,
+      var(--ink) 0%,
+      rgba(0,0,0,.86) 26%,
+      rgba(0,0,0,.42) 62%,
+      rgba(0,0,0,.30) 100%),
+    linear-gradient(180deg, var(--ink) 0%, transparent 22%, transparent 76%, var(--ink) 100%);
 }
 /* sits over the photo — the shadow does the legibility work,
    the glow only adds the lit feel on top of it */
@@ -727,7 +776,6 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
     transition-duration:.001ms !important;
   }
   .rv,.wordmark,.tagline{ opacity:1; transform:none; filter:none; }
-  .draw-rule{ transform:scaleX(1); }
   .key{ opacity:1; }
 }
 </style>
@@ -743,26 +791,25 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
      HERO — title card
      ========================================================= -->
 <header class="hero scene" data-scene>
-  <div class="key" aria-hidden="true"></div>
+  <div class="scene-photo scene-photo-hero" data-photo="hero" aria-hidden="true"></div>
 
   <div class="hero-bar">
     <span class="badge"><span class="live-dot"></span>Now in India</span>
     <a class="bar-link" href="#get">Download</a>
   </div>
 
-  <!-- Intro.tsx's order, exactly: rule draws → wordmark rises → tagline -->
+  <!-- wordmark rises, then the tagline — Intro.tsx's motion, on black -->
   <div class="title" data-parallax>
-    <div class="draw-rule" aria-hidden="true"></div>
     <h1 class="wordmark" data-brand>Future</h1>
     <p class="tagline" data-tag>For those tired of swiping.</p>
   </div>
 
   <div class="hero-foot">
-    <p class="hero-sub rv" style="--d:2050ms">
+    <p class="hero-sub rv" style="--d:1300ms">
       One real match a day. Twelve hours to decide.
       No feed, no grid, nothing to scroll.
     </p>
-    <div class="rv" style="--d:2170ms">
+    <div class="rv" style="--d:1420ms">
       <a class="btn" href="https://api.heyfuture.site/download">
         Download for Android
         <span class="btn-ico" aria-hidden="true">
@@ -772,7 +819,7 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
         </span>
       </a>
     </div>
-    <p class="hero-note rv" style="--d:2290ms">Free · 18+ · Android only for now</p>
+    <p class="hero-note rv" style="--d:1540ms">Free · 18+ · Android only for now</p>
   </div>
 </header>
 
@@ -782,7 +829,9 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
      THESIS
      ========================================================= -->
 <section class="band scene" data-scene>
-  <div class="key key-low key-left" aria-hidden="true"></div>
+  <!-- copy fills both columns here, so the photo is held back evenly
+       rather than pushed to one side -->
+  <div class="scene-photo scene-photo-dim" data-photo="thesis" aria-hidden="true"></div>
   <div class="wrap grid-2">
     <div>
       <p class="label rv">The idea</p>
@@ -808,7 +857,7 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
      THE PHONE
      ========================================================= -->
 <section class="band scene" data-scene>
-  <div class="key key-left" aria-hidden="true"></div>
+  <div class="scene-photo scene-photo-back" data-photo="phone" aria-hidden="true"></div>
   <div class="wrap show">
 
     <div class="phone-stage rv">
@@ -827,15 +876,30 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
             <div class="ui-bars" data-photo-bars aria-hidden="true"><i class="on"></i><i></i><i></i></div>
 
             <div class="ui-ring" aria-hidden="true">
+              <!-- same build as the app's TimerRing.tsx -->
               <svg width="52" height="52" viewBox="0 0 52 52">
-                <circle cx="26" cy="26" r="22" fill="#000" fill-opacity=".52"/>
-                <circle id="ringGlow" cx="26" cy="26" r="25" fill="none"
-                        stroke="#fff" stroke-opacity=".22" stroke-width="7"
+                <defs>
+                  <radialGradient id="discFade" cx="50%" cy="50%" r="50%">
+                    <stop offset="0"    stop-color="#000" stop-opacity=".72"/>
+                    <stop offset="0.65" stop-color="#000" stop-opacity=".58"/>
+                    <stop offset="1"    stop-color="#000" stop-opacity=".12"/>
+                  </radialGradient>
+                </defs>
+                <!-- legibility disc — fades out rather than sitting as a grey coin -->
+                <circle cx="26" cy="26" r="23" fill="url(#discFade)"/>
+                <!-- hairline track: the whole 12-hour window -->
+                <circle cx="26" cy="26" r="24.5" fill="none"
+                        stroke="#fff" stroke-opacity=".16" stroke-width="1.5"/>
+                <!-- halo following the remaining arc -->
+                <circle id="ringGlow" cx="26" cy="26" r="24.5" fill="none"
+                        stroke="#fff" stroke-opacity=".18" stroke-width="8"
                         stroke-linecap="round"/>
-                <circle cx="26" cy="26" r="25" fill="none"
-                        stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
-                <circle id="ringArc" cx="26" cy="26" r="25" fill="none"
+                <!-- bright remaining arc -->
+                <circle id="ringArc" cx="26" cy="26" r="24.5" fill="none"
                         stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+                <!-- glowing tip: bloom, then hot core -->
+                <circle id="ringTipGlow" cx="26" cy="1.5" r="4.8" fill="#fff" fill-opacity=".22"/>
+                <circle id="ringTip"     cx="26" cy="1.5" r="2.55" fill="#fff"/>
               </svg>
               <span class="ui-ring-mid">
                 <span class="ui-ring-n" id="ringN">11h</span>
@@ -885,7 +949,7 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
      HOW IT WORKS
      ========================================================= -->
 <section class="band scene" data-scene>
-  <div class="key key-low key-right" aria-hidden="true"></div>
+  <div class="scene-photo scene-photo-dim" data-photo="acts" aria-hidden="true"></div>
   <div class="wrap">
     <p class="label rv">How it works</p>
     <h2 class="h-sec rv" style="--d:100ms">Three steps.<br>Then patience.</h2>
@@ -924,7 +988,7 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
      ========================================================= -->
 <section class="interlude scene" data-scene>
   <div class="key" aria-hidden="true"></div>
-  <div class="scene-photo" data-scene-photo aria-hidden="true"></div>
+  <div class="scene-photo scene-photo-fog" data-photo="interlude" aria-hidden="true"></div>
   <div class="wrap">
     <p class="quote rv">A day is long enough to be <em>sure</em>.</p>
     <p class="quote-sub rv" style="--d:180ms">
@@ -938,7 +1002,7 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
      PLANS
      ========================================================= -->
 <section class="band scene" data-scene>
-  <div class="key key-low key-right" aria-hidden="true"></div>
+  <div class="scene-photo scene-photo-side" data-photo="plans" aria-hidden="true"></div>
   <div class="wrap grid-2">
     <div>
       <p class="label rv">When it clicks</p>
@@ -966,7 +1030,7 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
      CITIES
      ========================================================= -->
 <section class="band scene" data-scene>
-  <div class="key key-low key-left" aria-hidden="true"></div>
+  <div class="scene-photo scene-photo-dim" data-photo="cities" aria-hidden="true"></div>
   <div class="wrap">
     <p class="label rv">Cities</p>
     <h2 class="h-sec rv" style="--d:100ms">Future opens<br>city by city.</h2>
@@ -1012,7 +1076,7 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
      GET
      ========================================================= -->
 <section class="get scene" id="get" data-scene>
-  <div class="key" aria-hidden="true"></div>
+  <div class="scene-photo scene-photo-dim" data-photo="get" aria-hidden="true"></div>
   <div class="wrap">
     <p class="label rv">Get the app</p>
     <h2 class="get-h rv" style="--d:100ms">Meet one<br>person.</h2>
@@ -1135,8 +1199,30 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
     ['match-3.jpg', 'https://images.pexels.com/photos/27880484/pexels-photo-27880484.jpeg?auto=compress&cs=tinysrgb&w=900']
   ];
 
-  /* The interlude's full-bleed photo — the film's widest shot. */
-  var SCENE_PHOTO = ['scene.jpg', 'https://images.pexels.com/photos/6315379/pexels-photo-6315379.jpeg?auto=compress&cs=tinysrgb&w=1800'];
+  /* Full-bleed scene photography, keyed to the section it sits behind.
+     Same rule: local file first, stock URL as the stand-in.
+
+     Silhouettes and backlit night shots, not posed couples smiling at
+     a camera — they match the monochrome, and nobody is identifiable,
+     which is also the cleanest answer to the model-likeness problem.
+       hero      6315379  → couple holding hands, shiny city lights
+       thesis    9676247  → couple hand in hand, neon-lit street
+       phone     33445890 → silhouetted couple over city lights, twilight
+       acts      8983546  → couple silhouette, full moon, dramatic sky
+       interlude 14308693 → silhouetted pair hand in hand, foggy night
+       plans     7181363  → couple at dinner, warm restaurant light
+       cities    20118802 → rainy street at night, lights on wet pavement
+       get       38069557 → couple silhouette against a city skyline     */
+  var SCENES = {
+    hero:      ['hero.jpg',      'https://images.pexels.com/photos/6315379/pexels-photo-6315379.jpeg?auto=compress&cs=tinysrgb&w=1900'],
+    thesis:    ['thesis.jpg',    'https://images.pexels.com/photos/9676247/pexels-photo-9676247.jpeg?auto=compress&cs=tinysrgb&w=1600'],
+    phone:     ['phone.jpg',     'https://images.pexels.com/photos/33445890/pexels-photo-33445890.jpeg?auto=compress&cs=tinysrgb&w=1600'],
+    acts:      ['acts.jpg',      'https://images.pexels.com/photos/8983546/pexels-photo-8983546.jpeg?auto=compress&cs=tinysrgb&w=1700'],
+    interlude: ['scene.jpg',     'https://images.pexels.com/photos/14308693/pexels-photo-14308693.jpeg?auto=compress&cs=tinysrgb&w=1900'],
+    plans:     ['plans.jpg',     'https://images.pexels.com/photos/7181363/pexels-photo-7181363.jpeg?auto=compress&cs=tinysrgb&w=1600'],
+    cities:    ['cities.jpg',    'https://images.pexels.com/photos/20118802/pexels-photo-20118802.jpeg?auto=compress&cs=tinysrgb&w=1700'],
+    get:       ['get.jpg',       'https://images.pexels.com/photos/38069557/pexels-photo-38069557.jpeg?auto=compress&cs=tinysrgb&w=1700']
+  };
 
   var photoBox = document.querySelector('[data-photos]');
   var photoBars = document.querySelector('[data-photo-bars]');
@@ -1156,18 +1242,34 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
     });
   }
 
-  /* the interlude's wide shot */
-  var sceneBox = document.querySelector('[data-scene-photo]');
-  if (sceneBox) {
-    resolve(SCENE_PHOTO).then(function (url) {
-      if (!url) return;                    // key light carries the scene instead
-      var img = new Image();
-      img.src = url;
-      img.alt = '';
-      sceneBox.appendChild(img);
-      requestAnimationFrame(function () { img.classList.add('on'); });
-    });
-  }
+  /* scene photography — hero eagerly, the rest as they approach */
+  document.querySelectorAll('[data-photo]').forEach(function (box) {
+    var sources = SCENES[box.dataset.photo];
+    if (!sources) return;
+
+    var load = function () {
+      resolve(sources).then(function (url) {
+        if (!url) return;                  // nothing broken — the black stands
+        var img = new Image();
+        img.src = url;
+        img.alt = '';
+        box.appendChild(img);
+        requestAnimationFrame(function () { img.classList.add('on'); });
+      });
+    };
+
+    // the hero is the first thing seen; everything else waits its turn
+    if (box.dataset.photo === 'hero' || !('IntersectionObserver' in window)) {
+      load();
+    } else {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { load(); io.disconnect(); }
+        });
+      }, { rootMargin: '500px' });
+      io.observe(box.closest('section') || box);
+    }
+  });
 
   if (photoBox) {
     Promise.all(PHOTOS.map(resolve)).then(function (urls) {
@@ -1217,18 +1319,40 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
   var rn = document.getElementById('ringN');
   var rs = document.getElementById('ringS');
 
+  var tip = document.getElementById('ringTip');
+  var tipGlow = document.getElementById('ringTipGlow');
+
   if (arc && glow && rn && rs) {
-    var C = 2 * Math.PI * 25;
+    var R = 24.5;
+    var C = 2 * Math.PI * R;
     arc.setAttribute('stroke-dasharray', C + ' ' + C);
     glow.setAttribute('stroke-dasharray', C + ' ' + C);
 
     var TOTAL = 12 * 3600;
-    var left = 11 * 3600 + 59 * 60 + 47;
+    // Start part-way through the window, not at the top of it. A ring at
+    // 99% is indistinguishable from a plain circle — no visible arc, and
+    // the tip would sit under the arc's own start cap. ~70% shows the arc,
+    // the gap, and the glowing tip all at once.
+    var left = 8 * 3600 + 24 * 60;
 
     var paint = function () {
-      var off = C * (1 - Math.max(0, left / TOTAL));
+      var frac = Math.max(0, left / TOTAL);
+      var off = C * (1 - frac);
       arc.setAttribute('stroke-dashoffset', off);
       glow.setAttribute('stroke-dashoffset', off);
+
+      // walk the tip around to the arc's leading edge (12 o'clock = -90°)
+      if (tip && tipGlow) {
+        var a = frac * 2 * Math.PI - Math.PI / 2;
+        var tx = 26 + Math.cos(a) * R;
+        var ty = 26 + Math.sin(a) * R;
+        var show = frac > 0.02 && frac < 0.995;
+        [tip, tipGlow].forEach(function (el) {
+          el.setAttribute('cx', tx);
+          el.setAttribute('cy', ty);
+          el.style.opacity = show ? '1' : '0';
+        });
+      }
 
       var hh = Math.floor(left / 3600);
       var mm = Math.floor((left % 3600) / 60);
