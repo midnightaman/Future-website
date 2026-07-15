@@ -1793,13 +1793,12 @@
     }
 
     function triggerDownload(){
-      const a = document.createElement('a');
-      a.href = DL_URL;
-      a.download = 'Future.v1.1.apk';
-      a.rel = 'noopener';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      // Cross-origin "download" attributes are ignored by mobile browsers,
+      // and a detached <a>.click() is unreliable on mobile Chrome.
+      // A direct navigation is honored everywhere, and GitHub serves
+      // release assets with a Content-Disposition header that makes the
+      // browser download the file instead of navigating away from the page.
+      window.location.href = DL_URL;
     }
 
     function verify(){
@@ -1809,7 +1808,10 @@
         input.classList.remove('error');
         gate.style.display = 'none';
         success.classList.add('show');
-        setTimeout(triggerDownload, 300);
+        // Fire immediately, inside the click/keydown handler, so the
+        // navigation is still tied to the user's tap (mobile browsers can
+        // block downloads that happen after an async delay).
+        triggerDownload();
       } else {
         input.classList.remove('error');
         void input.offsetWidth;
