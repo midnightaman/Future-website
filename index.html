@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Future — For those tired of swiping.</title>
-<meta name="description" content="Match Real Twelve hours to decide. No feed, no swiping, no infinite scroll. Future is a swipeless dating app, made for India. Free on Android.">
+<meta name="description" content="One real match a day. Twelve hours to decide. No feed, no swiping, no infinite scroll. Future is a swipeless dating app, made for India. Free on Android.">
 <meta name="theme-color" content="#000000">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="Future — For those tired of swiping.">
-<meta property="og:description" content="Match Real Twelve hours to decide. No swiping. Free on Android.">
+<meta property="og:description" content="One real match a day. Twelve hours to decide. No swiping. Free on Android.">
 <meta property="og:url" content="https://heyfuture.site">
 <meta name="twitter:card" content="summary_large_image">
 
@@ -584,17 +584,72 @@ a{ color:inherit; }
     radial-gradient(120% 78% at 50% 50%, transparent 30%, rgba(0,0,0,.55) 100%);
 }
 
+/* ---------- the hero reel ----------
+   Not a video file — a stack of stills that cross-fade into one, the
+   way the reference does it. Each shot sits on top of the last and
+   drifts slowly while it's up, so the cut never feels like a slideshow.
+   Only shots that actually decode join the reel. */
+/* Scoped under .scene-photo-hero on purpose: the generic
+   `.scene-photo img` rule further down is specificity 0,1,1 and would
+   otherwise beat a bare `.hero-shot` (0,1,0) and silently kill both the
+   fast dissolve and the blur. Two classes = 0,2,0, so this wins. */
+.scene-photo-hero .hero-shot{
+  position:absolute; inset:0; z-index:1;
+  width:100%; height:100%;
+  object-fit:cover;
+  opacity:0;
+  transform:scale(1.12);
+  /* fast dissolve, slow push — the cut moves, the frame drifts */
+  transition:opacity .45s var(--ease-app), transform 2.6s linear;
+  pointer-events:none;
+  /* Barely any blur on purpose: these shots are ALREADY long exposures
+     with the motion baked into them. Stacking a heavy CSS blur on top
+     turned them to mush and threw away the light streaks — the very
+     thing that makes them read like the reference. */
+  filter:blur(.6px) saturate(1.22) contrast(1.04) brightness(.94);
+}
+.scene-photo-hero .hero-shot.on{ opacity:1; transform:scale(1); }
+
+/* ---------- hero colour grade ----------
+   Graded toward the reference: violet dusk in the sky, hot orange
+   through the middle where the couple is. Screen-blended so it lifts
+   the light rather than tinting the shadows, then the scrim above
+   pulls it back down for the wordmark.
+
+   Dial it back by lowering the alphas, or delete this block entirely
+   to see the footage ungraded. */
+.scene-photo-hero::before{
+  content:''; position:absolute; inset:0; z-index:2;
+  pointer-events:none;
+  background:linear-gradient(180deg,
+    rgba(124, 84, 200, .18) 0%,
+    rgba(146, 88, 190, .12) 32%,
+    rgba(255, 136, 42, .12) 55%,
+    rgba(255, 108, 28, .05) 70%,
+    transparent 88%);
+  mix-blend-mode:screen;
+}
+
+/* (the reel's own grade lives on .scene-photo-hero .hero-shot above —
+    no generic img rule here, it would out-rank it) */
+
 /* The wordmark carries no shadow at all, so this scrim has to buy the
    legibility on its own: a deep pool centred where "Future" sits, with
-   the photo opening back up toward the top and edges. */
+   the photo opening back up toward the top and edges. Sits above the
+   grade, so the type never fights it. */
 .scene-photo-hero::after{
+  z-index:3;
+  /* Light hand. The pool sits tight behind the wordmark only, and the
+     rest of the frame is left alone so the reel is actually visible —
+     it's the whole point of the hero. Raise these alphas if the type
+     starts to struggle on a bright shot. */
   background:
-    radial-gradient(100% 54% at 50% 58%, rgba(0,0,0,.76) 0%, rgba(0,0,0,.44) 48%, transparent 80%),
+    radial-gradient(72% 40% at 50% 56%, rgba(0,0,0,.62) 0%, rgba(0,0,0,.30) 55%, transparent 82%),
     linear-gradient(180deg,
-      rgba(0,0,0,.44) 0%,
-      rgba(0,0,0,.20) 20%,
-      rgba(0,0,0,.36) 44%,
-      rgba(0,0,0,.80) 74%,
+      rgba(0,0,0,.30) 0%,
+      rgba(0,0,0,.06) 22%,
+      rgba(0,0,0,.10) 48%,
+      rgba(0,0,0,.58) 78%,
       var(--ink) 100%);
 }
 
@@ -813,7 +868,7 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
      HERO — title card
      ========================================================= -->
 <header class="hero scene" data-scene>
-  <div class="scene-photo scene-photo-hero" data-photo="hero" aria-hidden="true"></div>
+  <div class="scene-photo scene-photo-hero" data-hero-reel aria-hidden="true"></div>
 
   <div class="hero-bar">
     <span class="badge"><span class="live-dot"></span>Now in India</span>
@@ -828,7 +883,7 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
 
   <div class="hero-foot">
     <p class="hero-sub rv" style="--d:1300ms">
-      Match Real Twelve hours to decide.
+      One real match a day. Twelve hours to decide.
       No feed, no grid, nothing to scroll.
     </p>
     <div class="rv" style="--d:1420ms">
@@ -1244,7 +1299,8 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
      Silhouettes and backlit night shots, not posed couples smiling at
      a camera — they match the monochrome, and nobody is identifiable,
      which is also the cleanest answer to the model-likeness problem.
-       hero      6315379  → couple holding hands, shiny city lights
+
+     (No hero here — it runs its own cross-fading reel, see 3c above.)
        thesis    9676247  → couple hand in hand, neon-lit street
        phone     33445890 → silhouetted couple over city lights, twilight
        acts      8983546  → couple silhouette, full moon, dramatic sky
@@ -1253,7 +1309,6 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
        cities    20118802 → rainy street at night, lights on wet pavement
        get       38069557 → couple silhouette against a city skyline     */
   var SCENES = {
-    hero:      ['hero.jpg',      'https://images.pexels.com/photos/6315379/pexels-photo-6315379.jpeg?auto=compress&cs=tinysrgb&w=1900'],
     thesis:    ['thesis.jpg',    'https://images.pexels.com/photos/9676247/pexels-photo-9676247.jpeg?auto=compress&cs=tinysrgb&w=1600'],
     phone:     ['phone.jpg',     'https://images.pexels.com/photos/33445890/pexels-photo-33445890.jpeg?auto=compress&cs=tinysrgb&w=1600'],
     acts:      ['acts.jpg',      'https://images.pexels.com/photos/8983546/pexels-photo-8983546.jpeg?auto=compress&cs=tinysrgb&w=1700'],
@@ -1347,6 +1402,86 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
           if (photoBars) photoBars.children[at].classList.add('on');
         }, 3400);
       }
+    });
+  }
+
+  /* ==========================================================
+     3c. THE HERO REEL
+     ----------------------------------------------------------
+     Not a video file — stills that cross-fade into one, the way the
+     reference does it.
+
+     Hand-picked off the contact sheet. 27167569 opens the reel — it's
+     the first thing anyone sees — and the rest run on from there.
+
+       27167569  couple in a forest, heavy swirl blur   ← opening frame
+       12192212  silhouettes against a violet + magenta sky
+       13615295  blurred couple, smiling, warm sepia grain
+       12761589  blurred street, couple + tram, long exposure
+       9675773   couple inside a huge swirl of gold light trails
+       16354122  couple on a bridge, gold streaks across a teal night
+
+     Local files win: drop hero-1.jpg … hero-6.jpg next to index.html
+     and they take over automatically — faster, and no CDN involved.
+     Only shots that actually decode make the reel, so a dead link
+     shortens it instead of breaking it. One shot = a still hero.
+     ========================================================== */
+  var HERO_REEL = [
+    ['hero-1.jpg', 'https://images.pexels.com/photos/27167569/pexels-photo-27167569.jpeg?auto=compress&cs=tinysrgb&w=1900'],
+    ['hero-2.jpg', 'https://images.pexels.com/photos/12192212/pexels-photo-12192212.jpeg?auto=compress&cs=tinysrgb&w=1900'],
+    ['hero-3.jpg', 'https://images.pexels.com/photos/13615295/pexels-photo-13615295.jpeg?auto=compress&cs=tinysrgb&w=1900'],
+    ['hero-4.jpg', 'https://images.pexels.com/photos/12761589/pexels-photo-12761589.jpeg?auto=compress&cs=tinysrgb&w=1900'],
+    ['hero-5.jpg', 'https://images.pexels.com/photos/9675773/pexels-photo-9675773.jpeg?auto=compress&cs=tinysrgb&w=1900'],
+    ['hero-6.jpg', 'https://images.pexels.com/photos/16354122/pexels-photo-16354122.jpeg?auto=compress&cs=tinysrgb&w=1900']
+  ];
+
+  var heroReel = document.querySelector('[data-hero-reel]');
+  if (heroReel) {
+    var addShot = function (url, first) {
+      var img = document.createElement('img');
+      img.className = 'hero-shot';
+      img.src = url;
+      img.alt = '';
+      heroReel.appendChild(img);
+      if (first) requestAnimationFrame(function () { img.classList.add('on'); });
+      return img;
+    };
+
+    var spin = function () {
+      var shots = heroReel.querySelectorAll('.hero-shot');
+      if (shots.length < 2 || reduced) return;  // a single still is fine
+
+      var at = 0;
+      // Very fast: 800ms a frame, with a .45s dissolve. The fade is more
+      // than half the hold, so a shot is always melting into the next —
+      // that overlap is what makes it read as a loop, not a slideshow.
+      var timer = setInterval(function () {
+        if (document.hidden) return;            // don't churn in a background tab
+        shots[at].classList.remove('on');
+        at = (at + 1) % shots.length;
+        shots[at].classList.add('on');
+      }, 800);
+
+      window.addEventListener('pagehide', function () { clearInterval(timer); });
+    };
+
+    // The opening frame goes up the moment IT is ready — waiting on the
+    // whole reel would hold the hero black until the slowest shot landed,
+    // and the hero is the first thing anyone sees.
+    resolve(HERO_REEL[0]).then(function (firstUrl) {
+      if (firstUrl) addShot(firstUrl, true);
+
+      Promise.all(HERO_REEL.slice(1).map(resolve)).then(function (rest) {
+        rest.filter(Boolean).forEach(function (url) { addShot(url, false); });
+
+        // if the opener never landed, promote whatever did
+        if (!firstUrl) {
+          var lead = heroReel.querySelector('.hero-shot');
+          if (!lead) return;                    // black stands, nothing broken
+          requestAnimationFrame(function () { lead.classList.add('on'); });
+        }
+        spin();
+      });
     });
   }
 
