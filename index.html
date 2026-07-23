@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Future — For those tired of swiping.</title>
-<meta name="description" content="One real match a day. Twelve hours to decide. No feed, no swiping, no infinite scroll. Future is a swipeless dating app, made for India. Free on Android.">
+<meta name="description" content="Two people a day. Twelve hours each. No feed, no swiping, no infinite scroll. Future is a swipeless dating app, made for India. Free on Android.">
 <meta name="theme-color" content="#000000">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="Future — For those tired of swiping.">
-<meta property="og:description" content="One real match a day. Twelve hours to decide. No swiping. Free on Android.">
+<meta property="og:description" content="Two people a day. Twelve hours each. No swiping. Free on Android.">
 <meta property="og:url" content="https://heyfuture.site">
 <meta name="twitter:card" content="summary_large_image">
 
@@ -335,6 +335,16 @@ a{ color:inherit; }
 .btn:hover .btn-ico{ transform:scale(1.09); }
 .btn-ico svg{ width:19px; height:19px; stroke:var(--white); }
 
+/* Two store buttons side by side: icon on the LEFT, label on the right. */
+.stores{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+.btn-store{ padding:6px 26px 6px 6px; gap:13px; }
+.btn-store .btn-ico svg{ width:24px; height:24px; fill:var(--white); stroke:none; }
+/* Instagram button — brand gradient, same pill shape. */
+.btn-ig{ background:linear-gradient(135deg,#F58529,#DD2A7B 55%,#8134AF); color:#fff;
+  box-shadow:0 0 34px rgba(221,42,123,.3), 0 14px 44px rgba(0,0,0,.6); }
+.btn-ig .btn-ico{ background:rgba(255,255,255,.18); }
+.btn-ig .btn-ico svg{ width:22px; height:22px; fill:#fff; stroke:none; }
+
 /* ============================================================
    SCENES
    ============================================================ */
@@ -560,6 +570,17 @@ a{ color:inherit; }
    ============================================================ */
 
 .scene-photo{ position:absolute; inset:0; z-index:-1; overflow:hidden; }
+
+/* The hero can't sit on dead black while the first frame downloads —
+   on a phone that's the whole screen for a second or two. This is a
+   cheap stand-in in the reel's own colours, costing zero bytes, and
+   the photo simply covers it when it lands. */
+.scene-photo-hero{
+  background:
+    radial-gradient(80% 55% at 50% 42%, rgba(126, 88, 190, .30) 0%, transparent 70%),
+    radial-gradient(70% 50% at 62% 68%, rgba(255, 132, 48, .16) 0%, transparent 72%),
+    linear-gradient(180deg, #14101f 0%, #0a0a10 55%, var(--ink) 100%);
+}
 
 .scene-photo img{
   width:100%; height:100%; object-fit:cover;
@@ -883,17 +904,21 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
 
   <div class="hero-foot">
     <p class="hero-sub rv" style="--d:1300ms">
-      One real match a day. Twelve hours to decide.
+      Two people a day. Twelve hours each.
       No feed, no grid, nothing to scroll.
     </p>
-    <div class="rv" style="--d:1420ms">
-      <a class="btn" href="https://api.heyfuture.site/download">
-        Download for Android
+    <div class="stores rv" style="--d:1420ms">
+      <a class="btn btn-store" href="https://api.heyfuture.site/coming-soon">
         <span class="btn-ico" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 3v13m0 0l5-5m-5 5l-5-5M4 21h16"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.36 12.73c-.02-2.02 1.65-2.99 1.72-3.04-.94-1.37-2.4-1.56-2.92-1.58-1.24-.13-2.42.73-3.05.73-.63 0-1.6-.71-2.63-.69-1.35.02-2.6.79-3.3 2-1.4 2.44-.36 6.05 1 8.03.67.97 1.46 2.05 2.5 2.01 1-.04 1.38-.65 2.6-.65 1.21 0 1.55.65 2.61.63 1.08-.02 1.76-.98 2.42-1.96.76-1.12 1.08-2.21 1.09-2.27-.02-.01-2.09-.8-2.11-3.18zM14.35 6.8c.55-.67.93-1.6.83-2.53-.8.03-1.77.53-2.34 1.2-.51.59-.96 1.53-.84 2.44.89.07 1.8-.45 2.35-1.11z"/></svg>
         </span>
+        App Store
+      </a>
+      <a class="btn btn-store" href="https://api.heyfuture.site/coming-soon">
+        <span class="btn-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.6 2.4c-.25.26-.4.66-.4 1.18v16.84c0 .52.15.92.4 1.18l.06.05 9.43-9.43v-.22L3.66 2.35l-.06.05zM16.8 15.6l-3.14-3.14v-.22l3.15-3.15.07.04 3.73 2.12c1.06.6 1.06 1.59 0 2.2l-3.73 2.11-.08.04zM13.66 12.35L4.17 21.84c.35.37.93.42 1.58.05l11.13-6.33-3.22-3.21zM4.17 2.16l9.49 9.49 3.22-3.22L5.75 2.1c-.65-.37-1.23-.32-1.58.06z"/></svg>
+        </span>
+        Google Play
       </a>
     </div>
     <p class="hero-note rv" style="--d:1540ms">Free · 18+ · Android only for now</p>
@@ -990,7 +1015,7 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
                 They already accepted you
               </span>
               <div class="ui-name">Your match</div>
-              <div class="ui-meta">One a day · 12 hours to decide</div>
+              <div class="ui-meta">Two a day · 12 hours each</div>
             </div>
           </div>
 
@@ -1044,8 +1069,8 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
         <span class="act-n">02</span>
         <h3 class="act-h">One person</h3>
         <p class="act-p">
-          Each day, one match. Chosen for you, and you for them. Nobody is
-          queued behind them, so there's nothing to compare against.
+          Two people a day, one at a time. Chosen for you, and you for them.
+          Nobody is queued behind them, so there's nothing to compare against.
         </p>
       </div>
       <div class="act rv" style="--d:340ms">
@@ -1131,7 +1156,7 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
       </div>
 
       <p class="city-note">
-        One match a day only works if there are people to match. So Future stays
+        Two matches a day only works if there are people to match. So Future stays
         shut in your city until <strong>25 women and 25 men</strong> have joined —
         then it opens for everyone at once, and you get a notification the second it does.
       </p>
@@ -1161,17 +1186,29 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
       Free to download. Free to use. About a minute to set up, and then
       you're on your city's list.
     </p>
-    <div class="get-cta rv" style="--d:300ms">
-      <a class="btn" href="https://api.heyfuture.site/download">
-        Download for Android
+    <div class="get-cta rv" style="--d:300ms; flex-direction:column; gap:14px; align-items:center;">
+      <div class="stores">
+        <a class="btn btn-store" href="https://api.heyfuture.site/coming-soon">
+          <span class="btn-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.36 12.73c-.02-2.02 1.65-2.99 1.72-3.04-.94-1.37-2.4-1.56-2.92-1.58-1.24-.13-2.42.73-3.05.73-.63 0-1.6-.71-2.63-.69-1.35.02-2.6.79-3.3 2-1.4 2.44-.36 6.05 1 8.03.67.97 1.46 2.05 2.5 2.01 1-.04 1.38-.65 2.6-.65 1.21 0 1.55.65 2.61.63 1.08-.02 1.76-.98 2.42-1.96.76-1.12 1.08-2.21 1.09-2.27-.02-.01-2.09-.8-2.11-3.18zM14.35 6.8c.55-.67.93-1.6.83-2.53-.8.03-1.77.53-2.34 1.2-.51.59-.96 1.53-.84 2.44.89.07 1.8-.45 2.35-1.11z"/></svg>
+          </span>
+          App Store
+        </a>
+        <a class="btn btn-store" href="https://api.heyfuture.site/coming-soon">
+          <span class="btn-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.6 2.4c-.25.26-.4.66-.4 1.18v16.84c0 .52.15.92.4 1.18l.06.05 9.43-9.43v-.22L3.66 2.35l-.06.05zM16.8 15.6l-3.14-3.14v-.22l3.15-3.15.07.04 3.73 2.12c1.06.6 1.06 1.59 0 2.2l-3.73 2.11-.08.04zM13.66 12.35L4.17 21.84c.35.37.93.42 1.58.05l11.13-6.33-3.22-3.21zM4.17 2.16l9.49 9.49 3.22-3.22L5.75 2.1c-.65-.37-1.23-.32-1.58.06z"/></svg>
+          </span>
+          Google Play
+        </a>
+      </div>
+      <a class="btn btn-ig" href="https://instagram.com/heyfuture.ai">
         <span class="btn-ico" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 3v13m0 0l5-5m-5 5l-5-5M4 21h16"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 8.1a4.9 4.9 0 100 9.8 4.9 4.9 0 000-9.8zm0 8.1a3.2 3.2 0 110-6.4 3.2 3.2 0 010 6.4zm6.2-8.3a1.15 1.15 0 11-2.3 0 1.15 1.15 0 012.3 0z"/></svg>
         </span>
+        Follow @heyfuture.ai
       </a>
     </div>
-    <p class="get-note rv" style="--d:400ms">Android only for now · iPhone is coming · 18+</p>
+    <p class="get-note rv" style="--d:400ms">Launching soon on iPhone &amp; Android · 18+</p>
   </div>
 </section>
 
@@ -1202,7 +1239,8 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
     <div class="foot-row">
       <span class="foot-mark">Future</span>
       <nav class="foot-nav">
-        <a href="https://api.heyfuture.site/download">Download</a>
+        <a href="https://api.heyfuture.site/coming-soon">Get the app</a>
+        <a href="https://instagram.com/heyfuture.ai">Instagram</a>
         <a href="https://api.heyfuture.site/privacy">Privacy</a>
         <a href="https://api.heyfuture.site/terms">Terms</a>
         <a href="mailto:siddharth@heyfuture.site">Contact</a>
@@ -1212,8 +1250,8 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
   </div>
 </footer>
 
-<a class="pill" href="https://api.heyfuture.site/download">
-  Download for Android
+<a class="pill" href="https://api.heyfuture.site/coming-soon">
+  Get the app
   <span class="pill-ico" aria-hidden="true">
     <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M12 3v13m0 0l5-5m-5 5l-5-5M4 21h16"/>
@@ -1309,14 +1347,33 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
        cities    20118802 → rainy street at night, lights on wet pavement
        get       38069557 → couple silhouette against a city skyline     */
   var SCENES = {
-    thesis:    ['thesis.jpg',    'https://images.pexels.com/photos/9676247/pexels-photo-9676247.jpeg?auto=compress&cs=tinysrgb&w=1600'],
-    phone:     ['phone.jpg',     'https://images.pexels.com/photos/33445890/pexels-photo-33445890.jpeg?auto=compress&cs=tinysrgb&w=1600'],
-    acts:      ['acts.jpg',      'https://images.pexels.com/photos/8983546/pexels-photo-8983546.jpeg?auto=compress&cs=tinysrgb&w=1700'],
-    interlude: ['scene.jpg',     'https://images.pexels.com/photos/14308693/pexels-photo-14308693.jpeg?auto=compress&cs=tinysrgb&w=1900'],
-    plans:     ['plans.jpg',     'https://images.pexels.com/photos/7181363/pexels-photo-7181363.jpeg?auto=compress&cs=tinysrgb&w=1600'],
-    cities:    ['cities.jpg',    'https://images.pexels.com/photos/20118802/pexels-photo-20118802.jpeg?auto=compress&cs=tinysrgb&w=1700'],
-    get:       ['get.jpg',       'https://images.pexels.com/photos/38069557/pexels-photo-38069557.jpeg?auto=compress&cs=tinysrgb&w=1700']
+    thesis:    ['thesis.jpg', px(9676247)],
+    phone:     ['phone.jpg',  px(33445890)],
+    acts:      ['acts.jpg',   px(8983546)],
+    interlude: ['scene.jpg',  px(14308693)],
+    plans:     ['plans.jpg',  px(7181363)],
+    cities:    ['cities.jpg', px(20118802)],
+    get:       ['get.jpg',    px(38069557)]
   };
+
+  /* ==========================================================
+     Serve images at the size the screen actually is.
+     A phone was being sent 1900px files — roughly 5x the pixels it
+     can show, which is why the hero sat black on mobile data. This
+     asks Pexels for a width that matches the viewport instead.
+     Rounded to a step so phones share one cached URL rather than
+     minting a new one per device width.
+     ========================================================== */
+  var PX_W = (function () {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var need = (window.innerWidth || 1280) * dpr;
+    return Math.min(1920, Math.max(640, Math.ceil(need / 160) * 160));
+  })();
+
+  function px(id) {
+    return 'https://images.pexels.com/photos/' + id +
+           '/pexels-photo-' + id + '.jpeg?auto=compress&cs=tinysrgb&w=' + PX_W;
+  }
 
   var photoBox = document.querySelector('[data-photos]');
   var photoBars = document.querySelector('[data-photo-bars]');
@@ -1427,12 +1484,12 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
      shortens it instead of breaking it. One shot = a still hero.
      ========================================================== */
   var HERO_REEL = [
-    ['hero-1.jpg', 'https://images.pexels.com/photos/27167569/pexels-photo-27167569.jpeg?auto=compress&cs=tinysrgb&w=1900'],
-    ['hero-2.jpg', 'https://images.pexels.com/photos/12192212/pexels-photo-12192212.jpeg?auto=compress&cs=tinysrgb&w=1900'],
-    ['hero-3.jpg', 'https://images.pexels.com/photos/13615295/pexels-photo-13615295.jpeg?auto=compress&cs=tinysrgb&w=1900'],
-    ['hero-4.jpg', 'https://images.pexels.com/photos/12761589/pexels-photo-12761589.jpeg?auto=compress&cs=tinysrgb&w=1900'],
-    ['hero-5.jpg', 'https://images.pexels.com/photos/9675773/pexels-photo-9675773.jpeg?auto=compress&cs=tinysrgb&w=1900'],
-    ['hero-6.jpg', 'https://images.pexels.com/photos/16354122/pexels-photo-16354122.jpeg?auto=compress&cs=tinysrgb&w=1900']
+    ['hero-1.jpg', px(27167569)],
+    ['hero-2.jpg', px(12192212)],
+    ['hero-3.jpg', px(13615295)],
+    ['hero-4.jpg', px(12761589)],
+    ['hero-5.jpg', px(9675773)],
+    ['hero-6.jpg', px(16354122)]
   ];
 
   var heroReel = document.querySelector('[data-hero-reel]');
@@ -1440,6 +1497,10 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
     var addShot = function (url, first) {
       var img = document.createElement('img');
       img.className = 'hero-shot';
+      // the opener is the largest thing above the fold; everything else
+      // can wait its turn behind it
+      img.fetchPriority = first ? 'high' : 'low';
+      img.decoding = 'async';
       img.src = url;
       img.alt = '';
       heroReel.appendChild(img);
@@ -1471,6 +1532,8 @@ footer{ padding:clamp(48px,8vh,80px) 0 clamp(32px,5vh,48px); }
     resolve(HERO_REEL[0]).then(function (firstUrl) {
       if (firstUrl) addShot(firstUrl, true);
 
+      // The other five only start downloading once the opener is up, so
+      // they can't compete with it for bandwidth on a phone.
       Promise.all(HERO_REEL.slice(1).map(resolve)).then(function (rest) {
         rest.filter(Boolean).forEach(function (url) { addShot(url, false); });
 
